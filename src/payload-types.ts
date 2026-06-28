@@ -67,8 +67,9 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
+    vehicles: Vehicle;
     media: Media;
+    users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,8 +77,9 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    vehicles: VehiclesSelect<false> | VehiclesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -119,10 +121,125 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicles".
+ */
+export interface Vehicle {
+  id: number;
+  title: string;
+  year?: number | null;
+  /**
+   * URL path: /vehicles/<slug>. Auto-generated from the title if left blank.
+   */
+  slug?: string | null;
+  status: 'draft' | 'published' | 'for-sale' | 'sold';
+  /**
+   * Who owns this build + its private ledger. Only admins can reassign.
+   */
+  owner?: (number | null) | User;
+  featured?: boolean | null;
+  /**
+   * Manual sort (lower = first).
+   */
+  order?: number | null;
+  category?: ('lifts' | 'street' | 'overland' | 'performance') | null;
+  clientTruck?: string | null;
+  /**
+   * Short blurb for the showroom card.
+   */
+  summary?: string | null;
+  /**
+   * Card + hero image.
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * Shown on the vehicle spec-sheet page. Drag to reorder.
+   */
+  gallery?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  beforeImage?: (number | null) | Media;
+  afterImage?: (number | null) | Media;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  challenge?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  solution?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  specs?: {
+    stance?: string | null;
+    wheels?: string | null;
+    engine?: string | null;
+    transmission?: string | null;
+    drivetrain?: string | null;
+    gearRatio?: string | null;
+    differential?: string | null;
+    performance?: string | null;
+  };
+  completionTime?: string | null;
+  estimatedCost?: number | null;
+  /**
+   * Shown when status is For sale.
+   */
+  salePrice?: number | null;
+  /**
+   * Optional build budget target (private — drives the Garage Ledger later).
+   */
+  budgetTarget?: number | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
+  name?: string | null;
+  role: 'admin' | 'owner';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -186,12 +303,16 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'vehicles';
+        value: number | Vehicle;
       } | null)
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -237,25 +358,51 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "vehicles_select".
  */
-export interface UsersSelect<T extends boolean = true> {
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
+export interface VehiclesSelect<T extends boolean = true> {
+  title?: T;
+  year?: T;
+  slug?: T;
+  status?: T;
+  owner?: T;
+  featured?: T;
+  order?: T;
+  category?: T;
+  clientTruck?: T;
+  summary?: T;
+  coverImage?: T;
+  gallery?:
     | T
     | {
+        image?: T;
+        caption?: T;
         id?: T;
-        createdAt?: T;
-        expiresAt?: T;
       };
+  beforeImage?: T;
+  afterImage?: T;
+  description?: T;
+  challenge?: T;
+  solution?: T;
+  specs?:
+    | T
+    | {
+        stance?: T;
+        wheels?: T;
+        engine?: T;
+        transmission?: T;
+        drivetrain?: T;
+        gearRatio?: T;
+        differential?: T;
+        performance?: T;
+      };
+  completionTime?: T;
+  estimatedCost?: T;
+  salePrice?: T;
+  budgetTarget?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -274,6 +421,30 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
