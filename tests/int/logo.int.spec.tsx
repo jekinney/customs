@@ -14,6 +14,14 @@ describe('Logo (gear mark)', () => {
     expect(container.querySelector('.logo--gold')).toBeTruthy()
   })
 
+  it('markOnly hides the wordmark text (clean small mark)', () => {
+    const { container: full } = render(<Logo />)
+    const { container: mark } = render(<Logo markOnly />)
+    expect(full.textContent).toContain('CUSTOMS')
+    expect(mark.textContent).not.toContain('CUSTOMS')
+    expect(mark.textContent).toContain('120')
+  })
+
   it('adds the spin class only when spinning', () => {
     const { container: still } = render(<Logo />)
     expect(still.querySelector('.logo-spin')).toBeNull()

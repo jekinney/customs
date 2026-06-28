@@ -5,6 +5,8 @@ type LogoProps = {
   size?: number
   spin?: boolean
   spinFast?: boolean
+  /** Simplified mark (gear + "120" only) for small sizes like the admin nav / favicon. */
+  markOnly?: boolean
   className?: string
   title?: string
 }
@@ -17,6 +19,7 @@ export function Logo({
   size = 44,
   spin = false,
   spinFast = false,
+  markOnly = false,
   className = '',
   title = '120 Customs',
 }: LogoProps) {
@@ -51,68 +54,79 @@ export function Logo({
             />
           ))}
         </g>
-        {/* outer ring */}
+        {/* outer ring — transparent center in mark-only mode so it reads at tiny sizes */}
         <circle
           cx="50"
           cy="50"
           r="35"
-          fill="var(--bg, #070708)"
+          fill={markOnly ? 'none' : 'var(--bg, #070708)'}
           stroke="currentColor"
           strokeWidth="4"
         />
-        {/* inner double rings */}
-        <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="1.4" />
-        <circle
-          cx="50"
-          cy="50"
-          r="28"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="0.8"
-          opacity="0.7"
-        />
-        {/* bolt dots */}
-        <g fill="currentColor">
-          {dots.map((deg) => (
-            <circle key={deg} cx="50" cy="24" r="1.3" transform={`rotate(${deg} 50 50)`} />
-          ))}
-        </g>
+
+        {!markOnly && (
+          <>
+            {/* inner double rings */}
+            <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="1.4" />
+            <circle
+              cx="50"
+              cy="50"
+              r="28"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="0.8"
+              opacity="0.7"
+            />
+            {/* bolt dots */}
+            <g fill="currentColor">
+              {dots.map((deg) => (
+                <circle key={deg} cx="50" cy="24" r="1.3" transform={`rotate(${deg} 50 50)`} />
+              ))}
+            </g>
+          </>
+        )}
+
         {/* wordmark */}
         <text
           x="50"
-          y="52"
+          y={markOnly ? 61 : 52}
           textAnchor="middle"
           fontFamily="Anton, 'Roboto Mono', sans-serif"
-          fontSize="22"
+          fontSize={markOnly ? 30 : 22}
           fill="currentColor"
         >
           120
         </text>
-        <line x1="34" y1="58" x2="66" y2="58" stroke="currentColor" strokeWidth="1.2" />
-        <text
-          x="50"
-          y="69"
-          textAnchor="middle"
-          fontFamily="'Roboto Mono', monospace"
-          fontWeight="700"
-          fontSize="9"
-          letterSpacing="1.5"
-          fill="currentColor"
-        >
-          CUSTOMS
-        </text>
-        <text
-          x="50"
-          y="78"
-          textAnchor="middle"
-          fontFamily="'Roboto Mono', monospace"
-          fontSize="4.5"
-          letterSpacing="1.8"
-          fill="currentColor"
-          opacity="0.85"
-        >
-          EST. 2012
-        </text>
+
+        {!markOnly && (
+          <>
+            <line x1="34" y1="58" x2="66" y2="58" stroke="currentColor" strokeWidth="1.2" />
+            <text
+              x="50"
+              y="69"
+              textAnchor="middle"
+              fontFamily="'Roboto Mono', monospace"
+              fontWeight="700"
+              fontSize="9"
+              letterSpacing="1.5"
+              fill="currentColor"
+            >
+              CUSTOMS
+            </text>
+            <text
+              x="50"
+              y="78"
+              textAnchor="middle"
+              fontFamily="'Roboto Mono', monospace"
+              fontSize="4.5"
+              letterSpacing="1.8"
+              fill="currentColor"
+              opacity="0.85"
+            >
+              EST. 2012
+            </text>
+          </>
+        )}
       </svg>
     </span>
   )

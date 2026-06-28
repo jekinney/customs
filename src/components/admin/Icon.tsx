@@ -15,7 +15,7 @@ export default function AdminIcon() {
       }}
       title="Return to Public Site"
     >
-      <Logo variant="gold" size={24} />
+      <Logo variant="gold" size={30} markOnly />
     </span>
   )
 }
