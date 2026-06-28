@@ -60,11 +60,16 @@ has a clear "definition of done." Phases are sequential; within a phase, items c
 - [x] **Roles + ownership (pulled from Phase 8):** `users` gain `admin`/`owner` role + name;
       `vehicle.owner` relation; access helpers (`src/access/roles.ts`) — public reads see published
       only, owners scoped to their own records, admins all. **6 access-control tests green** (red→green).
-- [ ] `media` GCS storage adapter (now: Payload local-disk storage works for QA; **needs your GCS bucket creds**).
-- [ ] Remaining collections: `settings` global (story), `inquiries`, `estimatorConfig`.
-- [ ] Migrate the exported "Shop Truck" + photos into a `vehicle`.
-- **QA in browser:** ⏳ log in to `/admin` → create a vehicle with a photo gallery; confirm it saves.
-- **Done when:** you can manage vehicles in `/admin`, access tests green (✅), content migrated.
+- [x] **`settings` global** (tabs: hero, story, contact, SEO) — public read, admin write.
+- [x] **`inquiries` collection** — public create (contact form), staff-only read/triage; 3 access tests green.
+- [x] **Migrated the "Shop Truck"** → published `vehicle` with before/after + 2-photo gallery
+      (`scripts/seed-shop-truck.mjs`; photos uploaded to Media). Verified via public API + image serving.
+- [ ] `media` **GCS** storage adapter (now: Payload local-disk works for QA; **needs your GCS bucket creds**).
+- [ ] `estimatorConfig` global (deferred to Phase 6 with the estimator).
+- **QA in browser:** ⏳ log in to `/admin` → see **Shop Truck** under Showroom → Vehicles; create another
+      with a gallery; check **Site → Settings** + **Leads → Inquiries**.
+- **Done when:** ✅ vehicles/settings/inquiries manageable in `/admin`, ✅ access tests green, ✅ Shop
+  Truck migrated — pending GCS for durable media + your QA sign-off.
 
 ## Phase 3 — Public site  (3–4 days)
 
