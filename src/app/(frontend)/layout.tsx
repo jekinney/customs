@@ -3,8 +3,10 @@ import type { Metadata } from 'next'
 import './styles.css'
 import { Header } from '@/components/site/Header'
 import { Footer } from '@/components/site/Footer'
+import { SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: '120 Customs — Trucks Built For The Show',
     template: '%s | 120 Customs',

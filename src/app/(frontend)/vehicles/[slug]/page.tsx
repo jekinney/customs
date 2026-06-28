@@ -1,10 +1,12 @@
 import React from 'react'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { Gallery } from '@/components/site/Gallery'
+import { absoluteUrl } from '@/lib/site'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,21 +14,49 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
-export default async function VehiclePage({ params }: PageProps) {
-  const { slug } = await params
-
+async function findVehicle(slug: string) {
   const payload = await getPayload({ config: configPromise })
   const { docs } = await payload.find({
     collection: 'vehicles',
     where: { slug: { equals: slug } },
     limit: 1,
   })
+  return docs[0] ?? null
+}
 
-  if (!docs || docs.length === 0) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  const vehicle = await findVehicle(slug)
+  if (!vehicle) return { title: 'Build not found' }
+
+  const title = `${vehicle.title}${vehicle.year ? ` (${vehicle.year})` : ''}`
+  const description =
+    vehicle.summary || `A custom ${vehicle.category || 'truck'} build by 120 Customs.`
+  const cover =
+    vehicle.coverImage && typeof vehicle.coverImage === 'object' ? vehicle.coverImage.url : null
+  const ogImage = absoluteUrl(cover)
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/vehicles/${slug}` },
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      images: ogImage ? [ogImage] : undefined,
+    },
+  }
+}
+
+export default async function VehiclePage({ params }: PageProps) {
+  const { slug } = await params
+
+  const vehicle = await findVehicle(slug)
+
+  if (!vehicle) {
     notFound()
   }
-
-  const vehicle = docs[0]
 
   const galleryImages = (vehicle.gallery || [])
     .map((item) => item.image)
@@ -40,8 +70,29 @@ export default async function VehiclePage({ params }: PageProps) {
   const afterUrl =
     vehicle.afterImage && typeof vehicle.afterImage === 'object' ? vehicle.afterImage.url : null
 
+  // Structured data: Product (+ Offer when the build is for sale) for rich results.
+  const jsonLd: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: vehicle.title,
+    ...(vehicle.summary ? { description: vehicle.summary } : {}),
+    ...(coverUrl ? { image: [absoluteUrl(coverUrl)] } : {}),
+    brand: { '@type': 'Brand', name: '120 Customs' },
+    ...(vehicle.status === 'for-sale' && vehicle.salePrice
+      ? {
+          offers: {
+            '@type': 'Offer',
+            price: vehicle.salePrice,
+            priceCurrency: 'USD',
+            availability: 'https://schema.org/InStock',
+          },
+        }
+      : {}),
+  }
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Hero */}
       <section className="hero" style={{ padding: '6rem 0 4rem' }}>
         <div className="container">

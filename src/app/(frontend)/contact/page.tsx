@@ -1,9 +1,17 @@
 import React from 'react'
+import type { Metadata } from 'next'
 import { ContactForm } from '@/components/site/ContactForm'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Contact',
+  description:
+    'Get in touch with 120 Customs about a custom truck build or a vehicle in the showroom.',
+  alternates: { canonical: '/contact' },
+}
 
 interface PageProps {
   searchParams: Promise<{ vehicle?: string }>

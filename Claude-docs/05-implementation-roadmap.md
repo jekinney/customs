@@ -89,13 +89,17 @@ has a clear "definition of done." Phases are sequential; within a phase, items c
       `RESEND_API_KEY` + `settings.contactEmail`. Optional: Cloudflare Turnstile.
 - **Done when:** ✅ submission saves + appears in the inbox; ⏳ email delivery once Resend is configured.
 
-## Phase 5 — SEO & polish  (1–2 days)
+## Phase 5 — SEO & polish  (1–2 days) — 🟡 SEO core done (2026-06-28)
 
-- [ ] `generateMetadata` per page, `sitemap.ts`, `robots.txt`.
-- [ ] JSON-LD: `LocalBusiness` on home, `Vehicle`/`Offer` on builds.
-- [ ] Open Graph / share images, alt text, performance pass (Core Web Vitals).
-- [ ] Vercel Analytics + Google Search Console.
-- **Done when:** Lighthouse SEO ~100 and the sitemap lists all builds.
+- [x] `generateMetadata` per page (unique titles via `%s | 120 Customs`, descriptions, canonical,
+      OG), `metadataBase` from `NEXT_PUBLIC_SITE_URL`; `sitemap.ts` (lists published vehicles),
+      `robots.ts` (blocks `/admin` + `/api`). Verified at `/sitemap.xml` + `/robots.txt`.
+- [x] JSON-LD: **`AutoRepair`/LocalBusiness** on home, **`Product` (+ `Offer` when for-sale)** on builds.
+- [ ] **Performance pass (Core Web Vitals):** swap `<img>` → `next/image`, ISR instead of
+      `force-dynamic`, alt-text audit. *(Carried over — the bigger remaining polish item.)*
+- [ ] Analytics (Google Analytics / Plausible) + submit sitemap to Google Search Console.
+- **Done when:** Lighthouse SEO ~100 and the sitemap lists all builds (✅ metadata/sitemap/JSON-LD
+  in place; ⏳ next/image + analytics).
 
 ## Phase 6 — Estimator  (1–2 days)
 

@@ -6,6 +6,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { ShowroomGrid } from '@/components/site/ShowroomGrid'
+import { SITE_URL } from '@/lib/site'
 
 export const dynamic = 'force-dynamic' // Ensure we see latest CMS changes
 
@@ -36,8 +37,23 @@ export default async function HomePage() {
     coverUrl: v.coverImage && typeof v.coverImage === 'object' && v.coverImage.url ? v.coverImage.url : null
   }))
 
+  // Local SEO: a LocalBusiness so 120 Customs can surface in local/map results.
+  const jsonLd: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'AutoRepair',
+    name: '120 Customs',
+    description:
+      'Custom truck builds, suspension drops, resto-mods and frame-off fabrication since 2012.',
+    url: SITE_URL,
+    foundingDate: '2012',
+    ...(settings.contactEmail ? { email: settings.contactEmail } : {}),
+    ...(settings.phone ? { telephone: settings.phone } : {}),
+    ...(settings.location ? { address: settings.location } : {}),
+  }
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Hero */}
       <section className="hero">
         <div className="container">
