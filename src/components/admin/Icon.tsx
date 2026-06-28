@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { Logo } from '@/components/brand/Logo'
 
@@ -5,8 +7,15 @@ import { Logo } from '@/components/brand/Logo'
 // does not depend on the public-site stylesheet.
 export default function AdminIcon() {
   return (
-    <span style={{ color: '#eab308', display: 'inline-flex' }}>
-      <Logo variant="gold" size={28} />
+    <span 
+      style={{ color: '#eab308', display: 'inline-flex', padding: '2px', cursor: 'pointer' }}
+      onClick={(e) => {
+        e.preventDefault()
+        window.location.href = '/'
+      }}
+      title="Return to Public Site"
+    >
+      <Logo variant="gold" size={24} />
     </span>
   )
 }

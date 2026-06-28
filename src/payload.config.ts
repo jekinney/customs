@@ -29,6 +29,9 @@ export default buildConfig({
         Logo: '@/components/admin/Logo#default',
         Icon: '@/components/admin/Icon#default',
       },
+      logout: {
+        Button: '@/components/admin/Logout#default',
+      },
     },
   },
   collections: [Vehicles, Media, Inquiries, Users],

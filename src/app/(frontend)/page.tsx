@@ -1,35 +1,69 @@
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ShopTruck } from '@/components/brand/ShopTruck'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import { RichText } from '@payloadcms/richtext-lexical/react'
+import { ShowroomGrid } from '@/components/site/ShowroomGrid'
 
-// Phase 1 homepage shell — design system + layout for review.
-// The Showroom grid and the editable story are wired to the CMS in later phases.
-export default function HomePage() {
+export const dynamic = 'force-dynamic' // Ensure we see latest CMS changes
+
+export default async function HomePage() {
+  const payload = await getPayload({ config: configPromise })
+
+  const settings = await payload.findGlobal({ slug: 'settings' })
+  const { docs: vehicles } = await payload.find({
+    collection: 'vehicles',
+    where: { status: { in: ['published', 'for-sale', 'sold'] } },
+    sort: 'order',
+  })
+
+  // Extract variables, falling back to static text if CMS is empty
+  const tagline = settings.tagline || '★ Precision Resto-Mods & Heavy-Duty Off-Road Builds'
+  const heroHeadline =
+    settings.heroHeadline || 'Trucks Built\n<span class="accent">For The Show</span>'
+  const storyTitle = settings.storyTitle || 'The Shop'
+
+  const mappedVehicles = vehicles.map(v => ({
+    id: v.id,
+    slug: v.slug as string,
+    title: v.title,
+    category: v.category,
+    year: v.year,
+    status: v.status,
+    summary: v.summary,
+    coverUrl: v.coverImage && typeof v.coverImage === 'object' && v.coverImage.url ? v.coverImage.url : null
+  }))
+
   return (
     <>
       {/* Hero */}
       <section className="hero">
         <div className="container">
-          <span className="badge">★ Precision Resto-Mods &amp; Heavy-Duty Off-Road Builds</span>
-          <h2>
-            Trucks Built
-            <br />
-            <span className="accent">For The Show</span>
-          </h2>
+          <span className="badge">{tagline}</span>
+          <h2 dangerouslySetInnerHTML={{ __html: heroHeadline }} />
           <p>
-            A personal collection of elite suspension drops, custom resto-mods and frame-off builds —
-            crafted for regional car shows, the drive, and the love of classic oil-and-steel culture.
+            A personal collection of elite suspension drops, custom resto-mods and frame-off builds
+            — crafted for regional car shows, the drive, and the love of classic oil-and-steel
+            culture.
           </p>
           <Link href="/#showroom" className="btn btn--gold">
             Examine The Showroom
           </Link>
           <div className="hero__truck">
-            <ShopTruck />
+            {settings.heroImage &&
+            typeof settings.heroImage === 'object' &&
+            settings.heroImage.url ? (
+              <img src={settings.heroImage.url} alt={settings.heroImage.alt || 'Hero truck'} />
+            ) : (
+              <ShopTruck />
+            )}
           </div>
         </div>
       </section>
 
-      {/* Showroom (CMS-driven in Phase 3) */}
+      {/* Showroom */}
       <section id="showroom" className="section section--center">
         <div className="container">
           <span className="section__eyebrow">Craftsmanship Showroom</span>
@@ -37,13 +71,8 @@ export default function HomePage() {
           <p style={{ color: 'var(--muted)', maxWidth: '40rem', margin: '0 auto 2rem' }}>
             Each build will show before/after, a full photo gallery and a complete spec sheet.
           </p>
-          <div className="placeholder">
-            Showroom grid loads from the CMS in Phase 3. Add vehicles in the{' '}
-            <Link href="/admin" style={{ color: 'var(--gold)' }}>
-              admin
-            </Link>
-            .
-          </div>
+
+          <ShowroomGrid vehicles={mappedVehicles} />
         </div>
       </section>
 
@@ -53,16 +82,32 @@ export default function HomePage() {
           <div className="shop-grid">
             <div className="card shop-truck-frame">
               <span className="shop-truck-frame__tag">Archive Spec // No. 01 OBS</span>
-              <ShopTruck />
+              {settings.storyImage &&
+              typeof settings.storyImage === 'object' &&
+              settings.storyImage.url ? (
+                <img
+                  src={settings.storyImage.url}
+                  alt={settings.storyImage.alt || 'The shop'}
+                  style={{ borderRadius: '0.75rem' }}
+                />
+              ) : (
+                <ShopTruck />
+              )}
             </div>
             <div>
               <span className="section__eyebrow">— Cores &amp; Craftsmanship</span>
-              <h3 className="section__title">The Shop</h3>
-              <p style={{ color: '#cbd0d6' }}>
-                I build and customize trucks as a personal passion project — from classic frame-off
-                teardowns to lowering setups and vintage body fittings. The objective is absolute
-                mechanical integrity and high-impact aesthetics.
-              </p>
+              <h3 className="section__title">{storyTitle}</h3>
+              {settings.storyContent ? (
+                <div style={{ color: '#cbd0d6', marginBottom: '1.5rem' }}>
+                  <RichText data={settings.storyContent} />
+                </div>
+              ) : (
+                <p style={{ color: '#cbd0d6' }}>
+                  I build and customize trucks as a personal passion project — from classic
+                  frame-off teardowns to lowering setups and vintage body fittings. The objective is
+                  absolute mechanical integrity and high-impact aesthetics.
+                </p>
+              )}
               <div className="code-list">
                 <div className="code-list__head">⛉ My Build Code</div>
                 <ul>
@@ -70,7 +115,8 @@ export default function HomePage() {
                     <span>01.</span> Perfect structural frame welds only — no half-measures.
                   </li>
                   <li>
-                    <span>02.</span> Match axle ratios precisely for vibration-free highway cruising.
+                    <span>02.</span> Match axle ratios precisely for vibration-free highway
+                    cruising.
                   </li>
                   <li>
                     <span>03.</span> Every project gets deep testing and car-show detailing.

@@ -71,20 +71,23 @@ has a clear "definition of done." Phases are sequential; within a phase, items c
 - **Done when:** ✅ vehicles/settings/inquiries manageable in `/admin`, ✅ access tests green, ✅ Shop
   Truck migrated — pending GCS for durable media + your QA sign-off.
 
-## Phase 3 — Public site  (3–4 days)
+## Phase 3 — Public site  (3–4 days) — 🟢 done (2026-06-28)
 
-- [ ] Home page (hero, featured builds, story) reading from the CMS.
-- [ ] **Showroom** grid with category filtering.
-- [ ] **Vehicle spec-sheet page** `/vehicles/[slug]`: cover, **photo gallery + lightbox**,
-      before/after slider, spec table, story, CTA.  ← includes the requested gallery.
-- **Done when:** every build has its own indexable page with a working photo gallery.
+- [x] Home page (hero, story) reading from CMS Settings (with static fallbacks); shows the showroom.
+- [x] **Showroom** grid (`ShowroomGrid`) with **category filtering**, reading published vehicles.
+- [x] **Vehicle spec-sheet page** `/vehicles/[slug]`: cover, **photo gallery + lightbox** (`Gallery`),
+      before/after, spec table, rich-text story, per-vehicle CTA. ✅ Verified rendering the Shop Truck.
+- [ ] *Polish carried to Phase 5:* swap `<img>` → `next/image`, ISR instead of `force-dynamic`.
+- **Done when:** ✅ every build has its own page with a working gallery — pending your QA sign-off.
 
-## Phase 4 — Lead capture  (1–2 days)
+## Phase 4 — Lead capture  (1–2 days) — 🟢 mostly done (2026-06-28)
 
-- [ ] Contact form (`/contact` + per-vehicle CTA) → server action.
-- [ ] Save `inquiry` + email you via Resend; honeypot + rate limit.
-- [ ] Admin inquiries inbox with status triage.
-- **Done when:** a test submission emails you and appears in the admin inbox.
+- [x] Contact form (`/contact` + per-vehicle CTA from the spec sheet) → server action `submitInquiry`.
+- [x] Saves an `inquiry` + emails via **Resend** (when `RESEND_API_KEY` set); **honeypot + rate limit**.
+- [x] Admin inquiries inbox (Leads → Inquiries) with status triage (from Phase 2).
+- [ ] **Needs your accounts:** Resend API key + a **verified sending domain** (`from` address); set
+      `RESEND_API_KEY` + `settings.contactEmail`. Optional: Cloudflare Turnstile.
+- **Done when:** ✅ submission saves + appears in the inbox; ⏳ email delivery once Resend is configured.
 
 ## Phase 5 — SEO & polish  (1–2 days)
 

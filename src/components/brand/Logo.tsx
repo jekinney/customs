@@ -31,22 +31,46 @@ export function Logo({
       aria-label={title}
     >
       <svg
-        viewBox="0 0 100 100"
+        viewBox="-7 -7 114 114"
         width={size}
         height={size}
         className={spin ? `logo-spin${spinFast ? ' logo-spin--fast' : ''}` : ''}
+        style={{ display: 'block', overflow: 'visible' }}
       >
         {/* gear teeth */}
         <g fill="currentColor">
           {teeth.map((deg) => (
-            <rect key={deg} x="46" y="1.5" width="8" height="14" rx="1.5" transform={`rotate(${deg} 50 50)`} />
+            <rect
+              key={deg}
+              x="46"
+              y="1.5"
+              width="8"
+              height="14"
+              rx="1.5"
+              transform={`rotate(${deg} 50 50)`}
+            />
           ))}
         </g>
         {/* outer ring */}
-        <circle cx="50" cy="50" r="35" fill="var(--bg, #070708)" stroke="currentColor" strokeWidth="4" />
+        <circle
+          cx="50"
+          cy="50"
+          r="35"
+          fill="var(--bg, #070708)"
+          stroke="currentColor"
+          strokeWidth="4"
+        />
         {/* inner double rings */}
         <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="1.4" />
-        <circle cx="50" cy="50" r="28" fill="none" stroke="currentColor" strokeWidth="0.8" opacity="0.7" />
+        <circle
+          cx="50"
+          cy="50"
+          r="28"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="0.8"
+          opacity="0.7"
+        />
         {/* bolt dots */}
         <g fill="currentColor">
           {dots.map((deg) => (
