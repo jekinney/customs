@@ -61,19 +61,29 @@ export async function submitInquiry(
       },
     })
 
-    // Attempt to send email via Resend
+    // Email notification — best-effort. A failure here must NOT fail the submission
+    // (the inquiry is already saved and visible in the admin inbox).
     if (process.env.RESEND_API_KEY) {
-      const settings = await payload.findGlobal({ slug: 'settings' })
-      const notifyEmail = settings.contactEmail || 'test@example.com' // Should be overridden by real address
-
-      const resend = new Resend(process.env.RESEND_API_KEY)
-      await resend.emails.send({
-        from: '120 Customs <website@120customs.com>',
-        to: notifyEmail,
-        replyTo: email,
-        subject: `New Inquiry from ${name}`,
-        text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'N/A'}\nVehicle ID: ${vehicle || 'None'}\n\nMessage:\n${message}`,
-      })
+      try {
+        const settings = await payload.findGlobal({ slug: 'settings' })
+        const notifyEmail = process.env.INQUIRY_NOTIFY_EMAIL || settings.contactEmail
+        const from = process.env.RESEND_FROM || '120 Customs <onboarding@resend.dev>'
+        if (notifyEmail) {
+          const resend = new Resend(process.env.RESEND_API_KEY)
+          const { error: emailError } = await resend.emails.send({
+            from,
+            to: notifyEmail,
+            replyTo: email,
+            subject: `New inquiry from ${name}`,
+            text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'N/A'}\nVehicle ID: ${vehicle || 'None'}\n\nMessage:\n${message}`,
+          })
+          if (emailError) console.error('Resend send error:', emailError)
+        } else {
+          console.warn('No notify email configured; skipping email notification.')
+        }
+      } catch (e) {
+        console.error('Failed to send inquiry email:', e)
+      }
     } else {
       console.warn('No RESEND_API_KEY set. Skipping email notification.')
     }
