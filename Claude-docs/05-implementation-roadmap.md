@@ -34,14 +34,22 @@ has a clear "definition of done." Phases are sequential; within a phase, items c
 - **Done when:** ✅ hello-world + admin **QA-able at `localhost:3000` in Docker**, ✅ sample test
   green, ✅ CI + export + git in place; ⏳ live Cloud Run URL (pending cloud provisioning).
 
-## Phase 1 — Foundation & design system  (1–2 days)
+## Phase 1 — Foundation & design system  (1–2 days) — 🟢 mostly done (2026-06-28)
 
-- [ ] Next.js App Router + TypeScript + Tailwind v4 scaffolding.
-- [ ] Port the **design tokens** (dark `#070708`, gold `#eab308`, mono/italic type) and shared
-      components: header, footer, logo/gear, buttons — each with a component test (red→green).
-- [ ] Base layout, fonts, global styles.
-- **QA in browser:** home shell renders with correct branding at `localhost:3000`.
-- **Done when:** the home shell looks like the current site, server-rendered, tests green, QA'd.
+- [x] Design tokens via CSS custom properties (dark `#070708`, gold `#eab308`, mono/italic display
+      type via Anton + Roboto Mono). *(Plain scoped CSS for now, not Tailwind — kept the review step
+      low-risk; can add Tailwind v4 later if we want utility classes.)*
+- [x] Shared components: **Logo** (inline SVG gear, gold/white, CSS-spinnable), **Header**,
+      **Footer**, **Loader** (spinning gold gear), buttons. Logo has component tests (green).
+- [x] `(frontend)` layout + homepage shell (hero / showroom placeholder / shop story) + route
+      `loading.tsx` = spinning gold logo.
+- [x] **Admin branded** — gold gear Logo/Icon graphics, title suffix `— 120 Customs`, favicon.
+- [x] Brand assets wired to `public/brand/` (owner to drop in `120-gear-gold/white.png`,
+      `120-shoptruck.png`; graceful fallbacks until then).
+- **QA in browser:** ✅ verified `/` 200 + `/admin` 200, hero/branding/spinning loader render.
+  ⏳ **Owner to add the 3 logo PNGs** and eyeball the look, then sign off.
+- **Done when:** home shell + branded admin render on the dark/gold theme, tests green — ✅ pending
+  your visual sign-off.
 
 ## Phase 2 — CMS + data model + access roles  (3–4 days)
 

@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="site-footer">
       <div className="container">
         <div className="brand">
-          <Logo variant="white" size={36} />
+          <Logo variant="gold" size={36} />
           <span className="brand__name">
             120 <span className="accent">Customs</span>
           </span>
