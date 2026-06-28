@@ -95,11 +95,12 @@ has a clear "definition of done." Phases are sequential; within a phase, items c
       OG), `metadataBase` from `NEXT_PUBLIC_SITE_URL`; `sitemap.ts` (lists published vehicles),
       `robots.ts` (blocks `/admin` + `/api`). Verified at `/sitemap.xml` + `/robots.txt`.
 - [x] JSON-LD: **`AutoRepair`/LocalBusiness** on home, **`Product` (+ `Offer` when for-sale)** on builds.
-- [ ] **Performance pass (Core Web Vitals):** swap `<img>` → `next/image`, ISR instead of
-      `force-dynamic`, alt-text audit. *(Carried over — the bigger remaining polish item.)*
-- [ ] Analytics (Google Analytics / Plausible) + submit sitemap to Google Search Console.
-- **Done when:** Lighthouse SEO ~100 and the sitemap lists all builds (✅ metadata/sitemap/JSON-LD
-  in place; ⏳ next/image + analytics).
+- [x] **Performance pass:** `next/image` via `MediaImage` (showroom cards, gallery, vehicle
+      cover/before/after — optimized + lazy + responsive), **ISR** (`revalidate=60`) on home +
+      vehicle pages. (Lightbox full-view + conditional brand/settings images stay plain `<img>`.)
+- [ ] Analytics (Google Analytics / Plausible) + submit sitemap to Google Search Console *(needs
+      your account; optional until launch)*.
+- **Done when:** ✅ metadata/sitemap/JSON-LD + next/image + ISR in place; ⏳ analytics at launch.
 
 ## Phase 6 — Estimator  (1–2 days)
 

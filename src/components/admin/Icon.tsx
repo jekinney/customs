@@ -7,15 +7,15 @@ import { Logo } from '@/components/brand/Logo'
 // does not depend on the public-site stylesheet.
 export default function AdminIcon() {
   return (
-    <span 
-      style={{ color: '#eab308', display: 'inline-flex', padding: '2px', cursor: 'pointer' }}
+    <span
+      style={{ color: '#eab308', display: 'inline-flex', cursor: 'pointer' }}
       onClick={(e) => {
         e.preventDefault()
         window.location.href = '/'
       }}
       title="Return to Public Site"
     >
-      <Logo variant="gold" size={30} markOnly />
+      <Logo variant="gold" size={28} markOnly />
     </span>
   )
 }

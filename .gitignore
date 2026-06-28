@@ -51,3 +51,4 @@ node_modules/
 
 # local screenshot artifacts
 /admin-*.png
+/home-header.png

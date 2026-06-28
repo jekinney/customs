@@ -1,0 +1,17 @@
+// 120 Customs admin overrides.
+// Payload's step-nav "home" icon slot is ~18px wide with overflow:hidden, which
+// clipped the right side of our gear mark. Give it room and let it overflow.
+// (Only touch the wrapper — never the SVG internals, or the gear teeth collapse.)
+.step-nav__home {
+  width: 30px !important;
+  height: 30px !important;
+  overflow: visible !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+
+  > span,
+  > span > span {
+    overflow: visible !important;
+  }
+}

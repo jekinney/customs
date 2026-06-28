@@ -86,13 +86,17 @@ export function Logo({
           </>
         )}
 
-        {/* wordmark */}
+        {/* wordmark — textLength forces "120" to a fixed width so it fits even when
+            the brand fonts aren't loaded (e.g. inside the Payload admin). */}
         <text
           x="50"
-          y={markOnly ? 61 : 52}
+          y={markOnly ? 60 : 52}
           textAnchor="middle"
           fontFamily="Anton, 'Roboto Mono', sans-serif"
           fontSize={markOnly ? 30 : 22}
+          fontWeight={markOnly ? 700 : undefined}
+          textLength={markOnly ? 46 : undefined}
+          lengthAdjust="spacingAndGlyphs"
           fill="currentColor"
         >
           120
