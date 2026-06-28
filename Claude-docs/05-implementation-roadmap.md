@@ -3,9 +3,22 @@
 A phased plan to get from today's SPA to the new Next.js site with minimal risk. Each phase
 has a clear "definition of done." Phases are sequential; within a phase, items can overlap.
 
+## Current status (2026-06-28)
+
+**Phases 0–6 are complete** — the site is feature-complete for a public launch. Built & verified:
+Next.js 16 + Payload 3 + Postgres on Docker; showroom + vehicle spec-sheet (gallery/lightbox) +
+contact/inquiries + build estimator (Gemini); CMS with roles/ownership, Settings, Inquiries,
+Estimator config; SEO (metadata/sitemap/robots/JSON-LD) + next/image + ISR; branded admin.
+**Infra wired:** **Resend** (email), **DigitalOcean Spaces** (media), **Gemini** (AI). Production
+build passes clean (`next build`, 0 TS errors). Test suite 16/16 green.
+
+**Not yet done:** Phase 7 — **launch/deploy to DigitalOcean App Platform** (deferred; needs the DO
+token + GitHub remote) + analytics. Optional **Phases 8–12 — private Garage Ledger**. Minor: drop
+the 3 brand PNGs into `public/brand/`; verify the Resend sending domain.
+
 > **Working rules apply to every phase** — see [07-engineering-rules.md](07-engineering-rules.md):
-> TDD red→green (1), documented as we go (2), Docker-local + Cloud Run deploy (3), and **you QA in
-> the browser after each step** (4). Each phase's checklist items are themselves browser-QA-able
+> TDD red→green (1), documented as we go (2), Docker-local + **DigitalOcean** deploy (3), and **you QA
+> in the browser after each step** (4). Each phase's checklist items are themselves browser-QA-able
 > steps; **"Done when"** below assumes tests green + your browser sign-off + docs updated.
 
 > **Gate before Phase 1:** ~~confirm the data/CMS fork~~ **DECIDED: Option A (Payload + Postgres)**.
