@@ -51,16 +51,20 @@ has a clear "definition of done." Phases are sequential; within a phase, items c
 - **Done when:** home shell + branded admin render on the dark/gold theme, tests green — ✅ pending
   your visual sign-off.
 
-## Phase 2 — CMS + data model + access roles  (3–4 days)
+## Phase 2 — CMS + data model + access roles  (3–4 days) — 🟡 in progress (2026-06-28)
 
-- [ ] Install Payload, connect Postgres, define collections (`vehicles`, `media`, `inquiries`,
-      `settings`, `estimatorConfig`) per [03-data-model.md](03-data-model.md); wire **GCS** uploads.
-- [ ] **Pull Phase 8 forward:** `users` + `admin`/`owner` roles + `vehicle.owner` + access
-      functions, with access-control tests written **red first** (highest-risk surface).
-- [ ] Create your owner login; migrate exported content; re-upload key photos at full res.
-- **QA in browser:** log in to `/admin`, see/edit your real builds + story; confirm a non-owner is
-  denied.
-- **Done when:** `/admin` shows your real content editable, access tests green, QA'd.
+- [x] **`vehicles` collection** per [03-data-model.md](03-data-model.md): title/slug (auto), status
+      (draft/published/for-sale/sold), category, cover image, **reorderable photo gallery**,
+      before/after, richtext story, specs group, pricing, featured/order, `budgetTarget`. Schema
+      pushed to Postgres (`vehicles` + `vehicles_gallery`).
+- [x] **Roles + ownership (pulled from Phase 8):** `users` gain `admin`/`owner` role + name;
+      `vehicle.owner` relation; access helpers (`src/access/roles.ts`) — public reads see published
+      only, owners scoped to their own records, admins all. **6 access-control tests green** (red→green).
+- [ ] `media` GCS storage adapter (now: Payload local-disk storage works for QA; **needs your GCS bucket creds**).
+- [ ] Remaining collections: `settings` global (story), `inquiries`, `estimatorConfig`.
+- [ ] Migrate the exported "Shop Truck" + photos into a `vehicle`.
+- **QA in browser:** ⏳ log in to `/admin` → create a vehicle with a photo gallery; confirm it saves.
+- **Done when:** you can manage vehicles in `/admin`, access tests green (✅), content migrated.
 
 ## Phase 3 — Public site  (3–4 days)
 
