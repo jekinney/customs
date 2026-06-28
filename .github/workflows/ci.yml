@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: customs
+          POSTGRES_PASSWORD: customs
+          POSTGRES_DB: customs
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U customs -d customs"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      # CI talks to the postgres service on localhost (not the compose hostname).
+      DATABASE_URI: postgresql://customs:customs@localhost:5432/customs
+      PAYLOAD_SECRET: ci_secret_min_32_characters_long_abcdefgh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # Hard gate (proven green): Payload integration tests.
+      - name: Integration tests (Vitest)
+        run: npm run test:int
+
+      - name: Lint
+        run: npm run lint
+
+      # Non-blocking for now — make a hard gate once e2e is stabilized in CI (TODO).
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+        continue-on-error: true
+      - name: E2E tests (Playwright)
+        run: npm run test:e2e
+        continue-on-error: true
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Requires repo secret GCP_SA_KEY (a Cloud Run deployer service-account JSON key),
+    # and secrets DATABASE_URI + PAYLOAD_SECRET in Google Secret Manager. See docs/workflows/deploy.md.
+    steps:
+      - uses: actions/checkout@v4
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy 120customs \
+            --source . \
+            --project gen-lang-client-0797455311 \
+            --region us-central1 \
+            --platform managed \
+            --allow-unauthenticated \
+            --port 8080 \
+            --memory 1Gi \
+            --set-secrets "DATABASE_URI=DATABASE_URI:latest,PAYLOAD_SECRET=PAYLOAD_SECRET:latest"

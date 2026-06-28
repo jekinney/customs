@@ -21,13 +21,18 @@ has a clear "definition of done." Phases are sequential; within a phase, items c
 - [x] **`deploy.sh` / `deploy.ps1`** to **Google Cloud Run** (project `gen-lang-client-0797455311`)
       + `.dockerignore`. Scripts written; not yet run (needs gcloud auth + Secret Manager).
 - [x] Test harness wired: **Vitest** integration green (3 tests pass in-container). Playwright e2e
-      config present (runs in CI on a browser image).
-- [x] Docs: app `README.md`, `docs/workflows/local-dev.md`, `docs/workflows/deploy.md`.
-- [ ] **Remaining:** provision **Neon Postgres** + GCS + Resend; first real `deploy.sh` run to a live
-      Cloud Run URL; GitHub Actions CI (test → deploy on green `main`); export current Firestore
-      `projects` + `settings/shop` to JSON.
+      config present (runs in CI).
+- [x] **git** initialized + initial commit; `.gitattributes` (LF normalization).
+- [x] **GitHub Actions CI** (`.github/workflows/ci.yml`): Postgres service → `npm ci` → lint +
+      `test:int` (hard gates) → e2e (non-blocking for now); deploy job to Cloud Run on green `main`.
+- [x] **Legacy data exported** → `migration/` (1 project "Shop Truck" + decoded before/after JPGs;
+      no custom shop doc). Reusable script at `scripts/export-legacy-firestore.mjs`.
+- [x] Docs: app `README.md`, `docs/workflows/local-dev.md`, `docs/workflows/deploy.md`, `migration/README.md`.
+- [ ] **Remaining (needs your accounts):** provision **Neon Postgres** + **GCS** bucket access +
+      **Resend**; add repo secret `GCP_SA_KEY` + Secret Manager `DATABASE_URI`/`PAYLOAD_SECRET`;
+      first real deploy to a live Cloud Run URL; create the GitHub remote and push.
 - **Done when:** ✅ hello-world + admin **QA-able at `localhost:3000` in Docker**, ✅ sample test
-  green; ⏳ `deploy.sh` ships to a live Cloud Run URL (pending cloud provisioning).
+  green, ✅ CI + export + git in place; ⏳ live Cloud Run URL (pending cloud provisioning).
 
 ## Phase 1 — Foundation & design system  (1–2 days)
 
