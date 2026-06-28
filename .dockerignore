@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.env
+.env*.local
+Claude-docs
+test-results
+playwright-report
+blob-report
+coverage
+*.tsbuildinfo
+npm-debug.log*
+.DS_Store
