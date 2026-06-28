@@ -93,9 +93,11 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | 'en' | 'en'[];
   globals: {
     settings: Setting;
+    'estimator-config': EstimatorConfig;
   };
   globalsSelect: {
     settings: SettingsSelect<false> | SettingsSelect<true>;
+    'estimator-config': EstimatorConfigSelect<false> | EstimatorConfigSelect<true>;
   };
   locale: 'en';
   widgets: {
@@ -577,6 +579,52 @@ export interface Setting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "estimator-config".
+ */
+export interface EstimatorConfig {
+  id: number;
+  /**
+   * Short blurb shown above the estimator.
+   */
+  intro?: string | null;
+  /**
+   * Truck platforms a customer can start from.
+   */
+  platforms?:
+    | {
+        name: string;
+        /**
+         * Starting build cost ($).
+         */
+        basePrice: number;
+        minYear?: number | null;
+        maxYear?: number | null;
+        type?: ('fullsize' | 'midsize' | 'heavy' | 'classic') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Build options. Lift / wheels / tires are single-choice; the rest are add-ons.
+   */
+  features?:
+    | {
+        name: string;
+        price: number;
+        group: 'lift' | 'wheels' | 'tires' | 'performance' | 'exterior' | 'interior' | 'other';
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Range +/- shown around the estimate (percent).
+   */
+  contingencyPct?: number | null;
+  disclaimer?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "settings_select".
  */
 export interface SettingsSelect<T extends boolean = true> {
@@ -599,6 +647,37 @@ export interface SettingsSelect<T extends boolean = true> {
   metaTitle?: T;
   metaDescription?: T;
   shareImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "estimator-config_select".
+ */
+export interface EstimatorConfigSelect<T extends boolean = true> {
+  intro?: T;
+  platforms?:
+    | T
+    | {
+        name?: T;
+        basePrice?: T;
+        minYear?: T;
+        maxYear?: T;
+        type?: T;
+        id?: T;
+      };
+  features?:
+    | T
+    | {
+        name?: T;
+        price?: T;
+        group?: T;
+        description?: T;
+        id?: T;
+      };
+  contingencyPct?: T;
+  disclaimer?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

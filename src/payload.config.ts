@@ -11,6 +11,7 @@ import { Media } from './collections/Media'
 import { Vehicles } from './collections/Vehicles'
 import { Inquiries } from './collections/Inquiries'
 import { Settings } from './globals/Settings'
+import { EstimatorConfig } from './globals/EstimatorConfig'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -55,7 +56,7 @@ export default buildConfig({
     },
   },
   collections: [Vehicles, Media, Inquiries, Users],
-  globals: [Settings],
+  globals: [Settings, EstimatorConfig],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
