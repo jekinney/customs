@@ -6,9 +6,11 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { Gallery } from '@/components/site/Gallery'
+import { MediaImage } from '@/components/site/MediaImage'
 import { absoluteUrl } from '@/lib/site'
 
-export const dynamic = 'force-dynamic'
+// ISR: cache the page, revalidate periodically (CMS edits appear within ~a minute).
+export const revalidate = 60
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -63,12 +65,12 @@ export default async function VehiclePage({ params }: PageProps) {
     .filter((img) => typeof img === 'object' && img !== null && img.url)
     .map((img) => ({ url: (img as any).url, alt: (img as any).alt }))
 
-  const coverUrl =
-    vehicle.coverImage && typeof vehicle.coverImage === 'object' ? vehicle.coverImage.url : null
-  const beforeUrl =
-    vehicle.beforeImage && typeof vehicle.beforeImage === 'object' ? vehicle.beforeImage.url : null
-  const afterUrl =
-    vehicle.afterImage && typeof vehicle.afterImage === 'object' ? vehicle.afterImage.url : null
+  const coverImg = vehicle.coverImage && typeof vehicle.coverImage === 'object' ? vehicle.coverImage : null
+  const beforeImg = vehicle.beforeImage && typeof vehicle.beforeImage === 'object' ? vehicle.beforeImage : null
+  const afterImg = vehicle.afterImage && typeof vehicle.afterImage === 'object' ? vehicle.afterImage : null
+  const coverUrl = coverImg?.url ?? null
+  const beforeUrl = beforeImg?.url ?? null
+  const afterUrl = afterImg?.url ?? null
 
   // Structured data: Product (+ Offer when the build is for sale) for rich results.
   const jsonLd: Record<string, unknown> = {
@@ -140,14 +142,14 @@ export default async function VehiclePage({ params }: PageProps) {
       {coverUrl && (
         <section className="section" style={{ paddingTop: 0 }}>
           <div className="container">
-            <img
+            <MediaImage
               src={coverUrl}
               alt={vehicle.title}
-              style={{
-                width: '100%',
-                borderRadius: '1rem',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
-              }}
+              width={coverImg?.width}
+              height={coverImg?.height}
+              priority
+              sizes="(max-width: 1100px) 100vw, 1100px"
+              style={{ borderRadius: '1rem', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }}
             />
           </div>
         </section>
@@ -308,10 +310,13 @@ export default async function VehiclePage({ params }: PageProps) {
                   >
                     Before
                   </h4>
-                  <img
+                  <MediaImage
                     src={beforeUrl}
                     alt={`${vehicle.title} Before`}
-                    style={{ width: '100%', borderRadius: '0.5rem', filter: 'grayscale(0.5)' }}
+                    width={beforeImg?.width}
+                    height={beforeImg?.height}
+                    sizes="(max-width: 700px) 100vw, 50vw"
+                    style={{ borderRadius: '0.5rem', filter: 'grayscale(0.5)' }}
                   />
                 </div>
               )}
@@ -327,14 +332,13 @@ export default async function VehiclePage({ params }: PageProps) {
                   >
                     After
                   </h4>
-                  <img
+                  <MediaImage
                     src={afterUrl}
                     alt={`${vehicle.title} After`}
-                    style={{
-                      width: '100%',
-                      borderRadius: '0.5rem',
-                      boxShadow: '0 10px 30px rgba(234, 179, 8, 0.15)',
-                    }}
+                    width={afterImg?.width}
+                    height={afterImg?.height}
+                    sizes="(max-width: 700px) 100vw, 50vw"
+                    style={{ borderRadius: '0.5rem', boxShadow: '0 10px 30px rgba(234, 179, 8, 0.15)' }}
                   />
                 </div>
               )}

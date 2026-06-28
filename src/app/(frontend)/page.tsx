@@ -8,7 +8,8 @@ import { RichText } from '@payloadcms/richtext-lexical/react'
 import { ShowroomGrid } from '@/components/site/ShowroomGrid'
 import { SITE_URL } from '@/lib/site'
 
-export const dynamic = 'force-dynamic' // Ensure we see latest CMS changes
+// ISR: cache the home page, revalidate periodically so CMS edits appear within ~a minute.
+export const revalidate = 60
 
 export default async function HomePage() {
   const payload = await getPayload({ config: configPromise })

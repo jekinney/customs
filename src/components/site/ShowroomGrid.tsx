@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { MediaImage } from './MediaImage'
 
 type VehicleProps = {
   id: string | number
@@ -87,10 +88,11 @@ export function ShowroomGrid({ vehicles }: { vehicles: VehicleProps[] }) {
                 }}
               >
                 {v.coverUrl ? (
-                  <img
+                  <MediaImage
                     src={v.coverUrl}
                     alt={v.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    fill
+                    sizes="(max-width: 700px) 100vw, 350px"
                   />
                 ) : (
                   <div

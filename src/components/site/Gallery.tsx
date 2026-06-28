@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { MediaImage } from './MediaImage'
 
 export function Gallery({ images }: { images: { url: string; alt?: string }[] }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
@@ -21,6 +22,7 @@ export function Gallery({ images }: { images: { url: string; alt?: string }[] })
             key={i}
             onClick={() => setLightboxIndex(i)}
             style={{
+              position: 'relative',
               cursor: 'pointer',
               aspectRatio: '4/3',
               overflow: 'hidden',
@@ -28,10 +30,11 @@ export function Gallery({ images }: { images: { url: string; alt?: string }[] })
               background: '#232326',
             }}
           >
-            <img
+            <MediaImage
               src={img.url}
               alt={img.alt || `Gallery image ${i + 1}`}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              fill
+              sizes="(max-width: 700px) 50vw, 200px"
             />
           </div>
         ))}
