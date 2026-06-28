@@ -3,10 +3,11 @@
 The rewrite is a **Next.js 15 (App Router)** application. This doc covers the recommended
 stack, the one open fork (data + CMS), hosting, image storage, auth, and email.
 
-> **Hosting updated 2026-06-28:** production runs on **Google Cloud Run** (same Google service the
-> current site uses, project `gen-lang-client-0797455311`), local runs in **Docker**, and media is
-> stored in **Google Cloud Storage** — this **supersedes earlier Vercel/Vercel-Blob notes** in this
-> doc. See [07-engineering-rules.md](07-engineering-rules.md) Rule 3.
+> **Hosting (current decision, 2026-06-28):** production runs on **DigitalOcean App Platform**
+> (builds our Dockerfile from GitHub), with **DO Managed Postgres** and **DO Spaces** (S3) for media;
+> local runs in **Docker**. This **supersedes the earlier Cloud Run and Vercel notes** in this doc.
+> See [07-engineering-rules.md](07-engineering-rules.md) Rule 3 and
+> [docs/workflows/deploy.md](../docs/workflows/deploy.md).
 
 ## Recommended stack at a glance
 
@@ -15,16 +16,16 @@ stack, the one open fork (data + CMS), hosting, image storage, auth, and email.
 | Framework | **Next.js 15**, App Router, React 19, TypeScript | Server rendering for SEO (goal #1), one app for site + admin |
 | Styling | **Tailwind CSS v4** | Port the existing dark/gold design 1:1 |
 | Local hosting | **Docker Compose** (app + Postgres) | Set up first; one-command local stack, matches prod |
-| Production hosting | **Google Cloud Run** | Same Google service as today; container on `$PORT` 8080 |
+| Production hosting | **DigitalOcean App Platform** | Builds our Dockerfile from GitHub; container on `$PORT`/`http_port` 8080 |
 | Content / CMS | **Payload CMS 3** (see fork below) | Real admin UI "for free"; runs inside the same Next.js app |
-| Database | **Neon Postgres** (serverless) | Decided 2026-06-28; cheap/serverless, works fine from Cloud Run. Local = Postgres container |
-| Image storage | **Google Cloud Storage** (existing bucket) | Real files, reuse `…firebasestorage.app`; not base64, not Vercel Blob |
-| Image delivery | **next/image** (in-container sharp) | Automatic resizing, AVIF/WebP, lazy-load; optional Cloud CDN |
+| Database | **DO Managed Postgres** | Same provider as the app; TLS (`DATABASE_SSL=true`). Local = Postgres container |
+| Image storage | **DigitalOcean Spaces** (S3-compatible) | Real files via Payload `@payloadcms/storage-s3`; not base64. Local = local-disk |
+| Image delivery | **next/image** (in-container sharp) | Automatic resizing, AVIF/WebP, lazy-load; optional Spaces CDN |
 | Admin auth | **Payload built-in auth** + roles | Email+password; admin/owner roles for the private ledger |
 | Transactional email | **Resend** | Provider-agnostic; emails you when a new inquiry arrives |
 | AI (estimator + invoices) | **Gemini via Next.js route handlers** | Keep features; key stays server-side |
 | Tests | **Vitest + RTL + Playwright** | TDD red→green (Rule 1); Playwright e2e against the Docker stack |
-| CI/CD | **GitHub Actions → Cloud Run** | Tests gate deploy; `deploy.sh`/`deploy.ps1` script |
+| CI/CD | **GitHub Actions → DO App Platform** | Tests gate deploy; `doctl apps create-deployment` on green `main` |
 
 ## The fork: data + CMS layer
 
@@ -81,21 +82,22 @@ are noted.
 
 - **Local: Docker Compose** (`app` + Postgres `db`) — set up first; `docker compose up` →
   `localhost:3000`. See [07-engineering-rules.md](07-engineering-rules.md) Rule 3.
-- **Production: Google Cloud Run** in project `gen-lang-client-0797455311` (same Google service as
-  the current site). Container listens on `$PORT` (8080). Deployed via `deploy.sh` / GitHub Actions.
-- Custom domain `120customs.com` mapped to the Cloud Run service (update DNS at cutover).
-- **Secrets via Google Secret Manager** (injected at deploy): `DATABASE_URL`, `PAYLOAD_SECRET`,
-  `GEMINI_API_KEY`, `RESEND_API_KEY`, GCS credentials. Nothing sensitive in the repo or image.
+- **Production: DigitalOcean App Platform** — builds the Dockerfile from the GitHub repo (spec at
+  `.do/app.yaml`). Container listens on `$PORT`; App Platform routes to `http_port` 8080. Deployed
+  via `deploy.sh` (doctl) / GitHub Actions.
+- Custom domain `120customs.com` mapped to the App Platform app (DO provisions TLS; update DNS at cutover).
+- **Secrets as App-level encrypted env vars** (`PAYLOAD_SECRET`, `GEMINI_API_KEY`, Spaces `S3_*`);
+  `DATABASE_URI` injected from the managed DB (`${db.DATABASE_URL}`). Nothing sensitive in the repo or image.
 
 ## Image storage & delivery
 
 1. Owner uploads full-resolution photos in the admin.
-2. Files are stored in **Google Cloud Storage** — reuse the existing bucket
-   `gen-lang-client-0797455311.firebasestorage.app` via Payload's **GCS storage adapter**. The
-   **database stores only the URL + alt text + order**, never base64. Private ledger files
-   (invoices/receipts) use a **private** path with signed URLs.
-3. Public pages render through **next/image** (in-container `sharp` on Cloud Run, optionally
-   fronted by **Cloud CDN**) for responsive sizing and modern formats. Sharp galleries, fast loads.
+2. Files are stored in **DigitalOcean Spaces** (S3-compatible) via Payload's **`@payloadcms/storage-s3`**
+   adapter. The **database stores only the URL + alt text + order**, never base64. Private ledger
+   files (invoices/receipts) use a **private** Space with signed URLs. *(Local dev uses Payload
+   local-disk storage.)*
+3. Public pages render through **next/image** (in-container `sharp`, optionally fronted by the
+   **Spaces CDN**) for responsive sizing and modern formats. Sharp galleries, fast loads.
 
 ## Auth model
 

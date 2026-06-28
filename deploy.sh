@@ -1,31 +1,36 @@
 #!/usr/bin/env bash
-# Deploy 120customs to Google Cloud Run — the same Google service the current site uses.
-# Builds the production Docker image via Cloud Build (using ./Dockerfile) and deploys it.
+# Deploy 120 Customs to DigitalOcean App Platform.
+# App Platform builds the Dockerfile from the connected GitHub repo. This script
+# creates the app the first time, or pushes spec changes + triggers a deployment after.
 #
 # Prerequisites (one-time):
-#   - gcloud CLI installed + `gcloud auth login`
-#   - Secrets created in Secret Manager: DATABASE_URI, PAYLOAD_SECRET (and later GEMINI_API_KEY, RESEND_API_KEY)
-#       printf '%s' "$VALUE" | gcloud secrets create DATABASE_URI --data-file=- --project gen-lang-client-0797455311
-#   - Cloud Run + Cloud Build + Secret Manager APIs enabled
+#   - doctl installed + `doctl auth init` (DigitalOcean API token)
+#   - Edit .do/app.yaml: set github.repo to your repo slug
+#   - After first create, set the app secrets in the dashboard (or `doctl apps update`):
+#       PAYLOAD_SECRET, GEMINI_API_KEY, and the S3_* Spaces keys
 #
-# Usage: ./deploy.sh   (override defaults via env vars, e.g. REGION=us-west1 ./deploy.sh)
+# Usage:
+#   ./deploy.sh create          # first time — creates the app + managed DB
+#   ./deploy.sh update <APP_ID>  # push .do/app.yaml changes
+#   ./deploy.sh deploy <APP_ID>  # trigger a new deployment (build latest main)
 set -euo pipefail
 
-PROJECT_ID="${PROJECT_ID:-gen-lang-client-0797455311}"
-REGION="${REGION:-us-central1}"
-SERVICE="${SERVICE:-120customs}"
+CMD="${1:-deploy}"
+APP_ID="${2:-${DO_APP_ID:-}}"
 
-echo "==> Deploying '$SERVICE' to Cloud Run (project=$PROJECT_ID region=$REGION)"
-
-gcloud run deploy "$SERVICE" \
-  --source . \
-  --project "$PROJECT_ID" \
-  --region "$REGION" \
-  --platform managed \
-  --allow-unauthenticated \
-  --port 8080 \
-  --memory 1Gi \
-  --set-secrets "DATABASE_URI=DATABASE_URI:latest,PAYLOAD_SECRET=PAYLOAD_SECRET:latest"
-
-echo "==> Done. Service URL:"
-gcloud run services describe "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format 'value(status.url)'
+case "$CMD" in
+  create)
+    doctl apps create --spec .do/app.yaml
+    ;;
+  update)
+    [ -n "$APP_ID" ] || { echo "Usage: ./deploy.sh update <APP_ID>"; exit 1; }
+    doctl apps update "$APP_ID" --spec .do/app.yaml
+    ;;
+  deploy)
+    [ -n "$APP_ID" ] || { echo "Usage: ./deploy.sh deploy <APP_ID>  (or set DO_APP_ID)"; exit 1; }
+    doctl apps create-deployment "$APP_ID" --wait
+    ;;
+  *)
+    echo "Unknown command '$CMD' (use: create | update <APP_ID> | deploy <APP_ID>)"; exit 1
+    ;;
+esac

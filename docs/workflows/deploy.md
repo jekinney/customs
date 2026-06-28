@@ -1,43 +1,58 @@
-# Workflow: Deploy to Google Cloud Run
+# Workflow: Deploy to DigitalOcean App Platform
 
-Production runs on **Google Cloud Run** in project `gen-lang-client-0797455311` — the same Google
-service the current 120customs.com site uses. The container is built from `./Dockerfile`
-(Next.js standalone output) and listens on `$PORT` (Cloud Run injects 8080).
+Production runs on **DigitalOcean App Platform**, which builds our `./Dockerfile` (Next.js
+standalone) straight from the connected GitHub repo, with **DigitalOcean Managed Postgres** and
+**DigitalOcean Spaces** (S3-compatible) for media. The spec lives in
+[`.do/app.yaml`](../../.do/app.yaml). Container listens on `$PORT` (App Platform routes to
+`http_port` 8080).
 
 ## One-time setup
 
-1. Install the `gcloud` CLI and authenticate:
+1. Install `doctl` and authenticate:
    ```bash
-   gcloud auth login
-   gcloud config set project gen-lang-client-0797455311
+   doctl auth init        # paste a DigitalOcean API token
    ```
-2. Enable APIs: Cloud Run, Cloud Build, Secret Manager.
-3. Create secrets (values not stored in the repo):
+2. In `.do/app.yaml`, set `services[0].github.repo` to your repo slug (e.g. `jekinney/120customs`)
+   and authorize DigitalOcean's GitHub app for the repo.
+3. Create the app + managed database:
    ```bash
-   printf '%s' "$PROD_DATABASE_URI" | gcloud secrets create DATABASE_URI --data-file=-
-   printf '%s' "$PROD_PAYLOAD_SECRET" | gcloud secrets create PAYLOAD_SECRET --data-file=-
+   ./deploy.sh create     # doctl apps create --spec .do/app.yaml
    ```
-   Use the **Neon** production connection string for `DATABASE_URI` (decided in the plan). Add
-   `GEMINI_API_KEY` and `RESEND_API_KEY` later when those features land.
+   Note the printed **App ID**.
+4. Set the app secrets (dashboard → app → Settings → env vars, or `doctl apps update`):
+   - `PAYLOAD_SECRET` — long random string
+   - `GEMINI_API_KEY` — for AI features
+   - `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` and the `S3_ENDPOINT` / `S3_BUCKET` values for
+     **Spaces** (media)
+   `DATABASE_URI` is injected automatically from the managed DB (`${db.DATABASE_URL}`), and
+   `DATABASE_SSL=true` is set in the spec (managed PG requires TLS).
 
-## Deploy
+## How deploys happen (test-gated)
 
-```bash
-./deploy.sh            # macOS/Linux
-./deploy.ps1           # Windows PowerShell
+`deploy_on_push` is **false** in the spec, so App Platform does not deploy on every push.
+Instead, on push to `main`, **GitHub Actions runs the tests** and only then triggers a deployment:
+
+```
+push to main → CI: npm ci + lint + Vitest (gate) → doctl apps create-deployment <APP_ID> --wait
 ```
 
-Override defaults via env vars, e.g. `REGION=us-west1 SERVICE=120customs ./deploy.sh`.
+This needs two repo secrets: `DIGITALOCEAN_ACCESS_TOKEN` and `DO_APP_ID`.
 
-The script runs `gcloud run deploy --source .`, which uses Cloud Build to build the Docker image,
-push it, and roll out a new revision with the secrets wired in. It prints the service URL at the end.
+## Manual deploy / spec changes
+
+```bash
+./deploy.sh deploy <APP_ID>    # trigger a build+deploy of latest main
+./deploy.sh update <APP_ID>    # push .do/app.yaml changes (size, env, etc.)
+```
+
+(`./deploy.ps1 ...` on Windows.)
+
+## Database migrations
+
+Dev uses Payload's auto-push. For production on managed PG we'll switch to committed migrations
+(`payload migrate`) run as a pre-deploy step — tracked in the roadmap before go-live.
 
 ## Domain
 
-At cutover, map `120customs.com` to the Cloud Run service (Cloud Run domain mapping or a load
-balancer) and update DNS. Keep the old site live until the new one is verified.
-
-## CI/CD (to be added in Phase 0 finish)
-
-GitHub Actions: run `npm run test:int` + Playwright e2e on every push; on green `main`, run the
-deploy. Until that's wired, deploy manually with the script above.
+Add `120customs.com` in the App Platform app (Settings → Domains); DigitalOcean provisions TLS.
+Update DNS to the provided records. Keep the old site live until verified.

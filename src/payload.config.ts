@@ -41,6 +41,9 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
+      // DigitalOcean Managed Postgres requires TLS (set DATABASE_SSL=true in prod).
+      // Local Docker Postgres uses no SSL.
+      ...(process.env.DATABASE_SSL === 'true' ? { ssl: { rejectUnauthorized: false } } : {}),
     },
   }),
   sharp,

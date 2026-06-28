@@ -64,10 +64,10 @@ Documentation is part of "done," written **alongside** the code, never deferred.
 
 **Definition of done = code + passing tests + updated docs + updated workflow.** All three.
 
-## Rule 3 — Docker local first, then a Cloud Run deploy script
+## Rule 3 — Docker local first, then a DigitalOcean deploy
 
-**Set up the containerized local environment before building features**, and deploy to the **same
-Google service the current site uses: Google Cloud Run** (project `gen-lang-client-0797455311`).
+**Set up the containerized local environment before building features**, and deploy to
+**DigitalOcean App Platform** (decided 2026-06-28) — which builds our Docker image from GitHub.
 
 **Local (set up first, Phase 0/1):**
 - **`docker-compose.yml`** brings up the full stack locally:
@@ -78,33 +78,30 @@ Google service the current site uses: Google Cloud Run** (project `gen-lang-clie
 - Tests can run inside the stack (Playwright against the running container; Vitest against `db`).
 - Hot reload in dev; production image is the optimized standalone build.
 
-**Production deploy (same Google service as today): Google Cloud Run**
-- Confirmed from the current repo's `Dockerfile` ("Cloud Run dynamically sets PORT", `EXPOSE 8080`)
-  and `firebase-applet-config.json` (GCP project `gen-lang-client-0797455311`).
-- **`deploy.sh`** (+ a `deploy.ps1` for Windows) script that:
-  1. Builds the production Docker image.
-  2. Deploys to Cloud Run in project `gen-lang-client-0797455311`:
-     `gcloud run deploy 120customs --source . --project gen-lang-client-0797455311
-     --region <REGION> --allow-unauthenticated --port 8080` (or build → Artifact Registry → deploy).
-  3. Passes runtime env vars/secrets via **Google Secret Manager** (`DATABASE_URL`,
-     `PAYLOAD_SECRET`, `GEMINI_API_KEY`, `RESEND_API_KEY`, GCS creds) — never baked into the image.
-  4. Health-checks the new revision before sending traffic.
-- **Container listens on `$PORT` (8080)** to satisfy Cloud Run, same contract as today.
-- **CI/CD:** GitHub Actions runs tests (Rule 1) then runs the deploy script on green `main` →
-  Cloud Run. Manual `./deploy.sh` available as a fallback.
+**Production deploy: DigitalOcean App Platform** (decided 2026-06-28, supersedes the earlier Cloud
+Run plan)
+- App Platform builds our `./Dockerfile` (Next.js standalone) straight from the connected GitHub
+  repo. Spec committed at [`.do/app.yaml`](../.do/app.yaml).
+- **`deploy.sh`** (+ `deploy.ps1`) wraps `doctl`:
+  - `./deploy.sh create` — first-time `doctl apps create --spec .do/app.yaml` (app + managed DB).
+  - `./deploy.sh update <APP_ID>` — push spec changes.
+  - `./deploy.sh deploy <APP_ID>` — `doctl apps create-deployment` (build latest `main`).
+- **Container listens on `$PORT`**; App Platform routes to `http_port` 8080.
+- Secrets are **App-level encrypted env vars** (`PAYLOAD_SECRET`, `GEMINI_API_KEY`, Spaces `S3_*`).
+  `DATABASE_URI` is injected from the managed DB (`${db.DATABASE_URL}`); `DATABASE_SSL=true`.
+- **CI/CD (test-gated):** `deploy_on_push: false`, so GitHub Actions runs tests (Rule 1) on green
+  `main` then triggers `doctl apps create-deployment` (needs repo secrets `DIGITALOCEAN_ACCESS_TOKEN`
+  + `DO_APP_ID`).
 
-**Hosting changes this forces** (supersedes earlier Vercel-based notes in
-[02-target-architecture.md](02-target-architecture.md)):
-- Hosting: **Cloud Run** (not Vercel).
-- Media storage: **Google Cloud Storage** — reuse the existing bucket
-  `gen-lang-client-0797455311.firebasestorage.app` via Payload's GCS storage adapter (not Vercel
-  Blob).
-- Next image optimization runs **in-container** (sharp) on Cloud Run, optionally fronted by Cloud
-  CDN.
-- Analytics: Google Analytics or self-host Plausible (not Vercel Analytics).
-- Database: **Neon Postgres** (decided 2026-06-28) — serverless, cheap, works fine from Cloud Run.
-  Local always uses the Postgres container; prod uses Neon via `DATABASE_URL`. (Cloud SQL remains a
-  future option if an all-Google footprint is ever wanted.)
+**Hosting stack (DigitalOcean):**
+- Hosting: **DO App Platform** (not Cloud Run / Vercel).
+- Database: **DO Managed Postgres** (`db` component in the spec; TLS required → `DATABASE_SSL=true`).
+  Local always uses the Postgres container. *(Supersedes the earlier Neon choice now that app + DB
+  share one provider.)*
+- Media storage: **DigitalOcean Spaces** (S3-compatible) via Payload's **`@payloadcms/storage-s3`**
+  adapter (not GCS). Local dev uses Payload local-disk.
+- Next image optimization runs **in-container** (sharp); optionally front Spaces with the DO CDN.
+- Analytics: Google Analytics or self-hosted Plausible.
 
 ## Rule 4 — Browser-QA-able after every step
 

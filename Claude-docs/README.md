@@ -17,8 +17,8 @@ build plan. Nothing here is built yet — this is the blueprint.
 | **Data + CMS** | **Payload CMS 3 + Neon Postgres** (Option A, confirmed) |
 | **Private Garage Ledger** | Per-vehicle **running budget + parts list + AI invoice ingestion + maintenance log** — admin/owner only ([06](06-build-budget-and-parts.md)) |
 | **Multi-user** | Vehicles have an **owner**; future **ownership transfer** of a vehicle + its ledger to a new user |
-| **Hosting** | **Google Cloud Run** (same Google service as today, project `gen-lang-client-0797455311`) — supersedes earlier Vercel idea |
-| **Local + deploy** | **Docker Compose** local (set up first) + `deploy.sh` to Cloud Run ([07](07-engineering-rules.md)) |
+| **Hosting** | **DigitalOcean App Platform** (builds Dockerfile from GitHub) + **DO Managed Postgres** + **DO Spaces** for media — supersedes earlier Cloud Run/Vercel ideas |
+| **Local + deploy** | **Docker Compose** local (set up first) + `deploy.sh` (doctl) to App Platform, test-gated CI ([07](07-engineering-rules.md)) |
 | **Engineering rules** | TDD red→green · documented as we go · Docker-first · **browser-QA after every step** ([07](07-engineering-rules.md)) |
 | **Dropped for now** | Testimonials/reviews (can add later) |
 

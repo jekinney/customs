@@ -1,0 +1,62 @@
+# DigitalOcean App Platform spec for 120 Customs.
+# App Platform builds the Dockerfile from the connected GitHub repo and deploys it.
+# Deploys are gated by CI (deploy_on_push: false) — GitHub Actions triggers a deployment
+# only after tests pass (see .github/workflows/ci.yml).
+#
+# First-time setup:  doctl apps create --spec .do/app.yaml
+# Update spec:       doctl apps update <APP_ID> --spec .do/app.yaml
+name: 120customs
+region: nyc
+
+services:
+  - name: web
+    # Build from our multi-stage Dockerfile (Next.js standalone output).
+    dockerfile_path: Dockerfile
+    source_dir: /
+    github:
+      repo: jekinney/120customs # TODO: set to the actual GitHub repo slug once created
+      branch: main
+      deploy_on_push: false # CI triggers deploys after tests pass
+    http_port: 8080
+    instance_size_slug: apps-s-1vcpu-1gb
+    instance_count: 1
+    health_check:
+      http_path: /
+    envs:
+      # App Platform injects the managed DB connection string here.
+      - key: DATABASE_URI
+        scope: RUN_TIME
+        value: ${db.DATABASE_URL}
+      # Managed PG requires TLS; tells our config to enable ssl.
+      - key: DATABASE_SSL
+        scope: RUN_TIME
+        value: 'true'
+      # Set these as encrypted app-level secrets (dashboard or `doctl apps update`):
+      - key: PAYLOAD_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: GEMINI_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      # DigitalOcean Spaces (media storage) — fill in when wiring the S3 adapter:
+      - key: S3_ENDPOINT
+        scope: RUN_TIME
+        value: ''
+      - key: S3_BUCKET
+        scope: RUN_TIME
+        value: ''
+      - key: S3_ACCESS_KEY_ID
+        scope: RUN_TIME
+        type: SECRET
+      - key: S3_SECRET_ACCESS_KEY
+        scope: RUN_TIME
+        type: SECRET
+
+databases:
+  - name: db
+    engine: PG
+    version: '16'
+    production: true
+    cluster_name: 120customs-db
+    size: db-s-1vcpu-1gb
+    num_nodes: 1
