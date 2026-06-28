@@ -17,6 +17,16 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    meta: {
+      titleSuffix: '— 120 Customs',
+      icons: [{ rel: 'icon', type: 'image/png', url: '/brand/120-gear-gold.png' }],
+    },
+    components: {
+      graphics: {
+        Logo: '@/components/admin/Logo#default',
+        Icon: '@/components/admin/Icon#default',
+      },
+    },
   },
   collections: [Users, Media],
   editor: lexicalEditor(),
