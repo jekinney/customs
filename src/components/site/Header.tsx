@@ -21,9 +21,6 @@ export function Header() {
           <Link href="/#shop">The Shop</Link>
           <Link href="/estimator">Estimator</Link>
           <Link href="/contact">Contact</Link>
-          <Link href="/admin" className="nav__admin">
-            Admin
-          </Link>
         </nav>
       </div>
     </header>

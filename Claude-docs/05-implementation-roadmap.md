@@ -102,11 +102,16 @@ has a clear "definition of done." Phases are sequential; within a phase, items c
       your account; optional until launch)*.
 - **Done when:** ✅ metadata/sitemap/JSON-LD + next/image + ISR in place; ⏳ analytics at launch.
 
-## Phase 6 — Estimator  (1–2 days)
+## Phase 6 — Estimator  (1–2 days) — 🟢 done (2026-06-28)
 
-- [ ] Port the interactive estimator; move the Gemini call server-side.
-- [ ] Drive its options from `estimatorConfig` so prices are CMS-editable.
-- **Done when:** the estimator works without exposing the API key.
+- [x] `estimator-config` global (CMS-editable platforms, features by group, contingency %,
+      disclaimer) + seeded example data (`scripts/seed-estimator.mjs`).
+- [x] `/estimator` page + `EstimatorForm` — pick platform/year + lift/wheels/tires/add-ons, **live
+      range** computed from CMS pricing; nav link added.
+- [x] `estimateBuild` **server action**: deterministic total + range, **Gemini 2.5-flash** narrative
+      (key stays server-side, `@google/genai`). Graceful degrade — estimate always returns if AI fails.
+- **Done when:** ✅ estimator works, prices CMS-editable, API key server-side. Verified end-to-end
+  ($13.4k build + AI summary).
 
 ## Phase 7 — Launch  (½–1 day)
 

@@ -9,7 +9,10 @@ await page.fill('#field-email', 'dev@payloadcms.com')
 await page.fill('#field-password', 'test')
 await page.click('button[type="submit"]')
 await page.waitForURL('**/admin', { timeout: 20000 }).catch(() => {})
-await page.waitForTimeout(2500)
+await page.waitForTimeout(2000)
+// Open the nav sidebar so the Dashboard / View Site links are visible.
+await page.locator('.nav-toggler').first().click().catch(() => {})
+await page.waitForTimeout(1200)
 await page.screenshot({ path: 'admin-dash.png' })
 // Tight crop of the top-left nav header where the icon lives.
 const dims = await page.evaluate(() => {

@@ -53,6 +53,8 @@ export default buildConfig({
       logout: {
         Button: '@/components/admin/Logout#default',
       },
+      beforeNavLinks: ['@/components/admin/DashboardLink#default'],
+      afterNavLinks: ['@/components/admin/ViewSiteLink#default'],
     },
   },
   collections: [Vehicles, Media, Inquiries, Users],

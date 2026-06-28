@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import { Logo } from '../brand/Logo'
 
 export function Footer() {
@@ -13,7 +14,12 @@ export function Footer() {
           </span>
         </div>
         <p>Precision resto-mods, suspension drops &amp; frame-off builds — since 2012.</p>
-        <p>&copy; {year} 120 Customs. All builds hand-fabricated.</p>
+        <p>
+          &copy; {year} 120 Customs. All builds hand-fabricated. ·{' '}
+          <Link href="/admin" style={{ color: 'var(--muted)', textDecoration: 'underline' }}>
+            Admin
+          </Link>
+        </p>
       </div>
     </footer>
   )
