@@ -20,7 +20,7 @@ export function Header() {
           <Link href="/#showroom">Showroom</Link>
           <Link href="/#shop">The Shop</Link>
           <Link href="/estimator">Estimator</Link>
-          <Link href="/contact">Contact</Link>
+          <Link href="/#contact">Contact</Link>
         </nav>
       </div>
     </header>

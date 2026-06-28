@@ -16,6 +16,10 @@ export function Footer() {
         <p>Precision resto-mods, suspension drops &amp; frame-off builds — since 2012.</p>
         <p>
           &copy; {year} 120 Customs. All builds hand-fabricated. ·{' '}
+          <Link href="/contact" style={{ color: 'var(--muted)', textDecoration: 'underline' }}>
+            Contact
+          </Link>{' '}
+          ·{' '}
           <Link href="/admin" style={{ color: 'var(--muted)', textDecoration: 'underline' }}>
             Admin
           </Link>

@@ -6,6 +6,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { ShowroomGrid } from '@/components/site/ShowroomGrid'
+import { ContactForm } from '@/components/site/ContactForm'
 import { SITE_URL } from '@/lib/site'
 
 // ISR: cache the home page, revalidate periodically so CMS edits appear within ~a minute.
@@ -142,6 +143,28 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section id="contact" className="section section--center">
+        <div className="container" style={{ maxWidth: '42rem' }}>
+          <span className="section__eyebrow">Get In Touch</span>
+          <h3 className="section__title">
+            Start a <span className="accent">Conversation</span>
+          </h3>
+          <p style={{ color: '#cbd0d6', margin: '0 auto 2rem', maxWidth: '36rem' }}>
+            Interested in a custom build, or have questions about a truck in the showroom? Send a
+            note and we&apos;ll get back to you.
+          </p>
+          <div style={{ textAlign: 'left' }}>
+            <ContactForm />
+          </div>
+          {(settings.contactEmail || settings.phone || settings.location) && (
+            <div style={{ marginTop: '1.5rem', color: 'var(--muted)', fontSize: '0.85rem' }}>
+              {[settings.contactEmail, settings.phone, settings.location].filter(Boolean).join('  ·  ')}
+            </div>
+          )}
         </div>
       </section>
     </>

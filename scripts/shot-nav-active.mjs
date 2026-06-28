@@ -1,0 +1,15 @@
+import { chromium } from '@playwright/test'
+const b = await chromium.launch()
+const p = await b.newPage({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 2 })
+await p.goto('http://localhost:3000/admin/login', { waitUntil: 'networkidle' })
+await p.fill('#field-email', 'dev@payloadcms.com')
+await p.fill('#field-password', 'test')
+await p.click('button[type="submit"]')
+await p.waitForURL('**/admin', { timeout: 20000 }).catch(() => {})
+await p.goto('http://localhost:3000/admin/collections/vehicles', { waitUntil: 'networkidle' })
+await p.waitForTimeout(800)
+await p.locator('.nav-toggler').first().click().catch(() => {})  // open sidebar AFTER landing
+await p.waitForTimeout(1500)
+await p.screenshot({ path: 'nav-active.png', clip: { x: 0, y: 0, width: 380, height: 640 } })
+console.log('saved nav-active.png')
+await b.close()
