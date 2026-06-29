@@ -74,6 +74,7 @@ export interface Config {
     stores: Store;
     parts: Part;
     invoices: Invoice;
+    'maintenance-records': MaintenanceRecord;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -89,6 +90,7 @@ export interface Config {
     stores: StoresSelect<false> | StoresSelect<true>;
     parts: PartsSelect<false> | PartsSelect<true>;
     invoices: InvoicesSelect<false> | InvoicesSelect<true>;
+    'maintenance-records': MaintenanceRecordsSelect<false> | MaintenanceRecordsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -454,6 +456,74 @@ export interface Invoice {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "maintenance-records".
+ */
+export interface MaintenanceRecord {
+  id: number;
+  vehicle: number | Vehicle;
+  type:
+    'oil-change' | 'brake-service' | 'fluid-flush' | 'tire-rotation' | 'tune-up' | 'inspection' | 'repair' | 'other';
+  date?: string | null;
+  /**
+   * Odometer at service.
+   */
+  mileage?: number | null;
+  /**
+   * Parts & consumables used (oil, filter, fluids…).
+   */
+  items?:
+    | {
+        name: string;
+        brand?: string | null;
+        /**
+         * e.g. 5W-30 synthetic
+         */
+        spec?: string | null;
+        partNumber?: string | null;
+        quantity?: number | null;
+        unitCost?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  laborCost?: number | null;
+  /**
+   * Consumables + labor (auto).
+   */
+  totalCost?: number | null;
+  /**
+   * Optional receipt/photo.
+   */
+  receipt?: (number | null) | Media;
+  notes?: string | null;
+  /**
+   * AI-suggested; editable.
+   */
+  nextDueMileage?: number | null;
+  /**
+   * AI-suggested; editable.
+   */
+  nextDueDate?: string | null;
+  /**
+   * Inherited from the vehicle.
+   */
+  owner?: (number | null) | User;
+  /**
+   * AI next-service suggestions (advisory).
+   */
+  aiRecommendations?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -503,6 +573,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'invoices';
         value: number | Invoice;
+      } | null)
+    | ({
+        relationTo: 'maintenance-records';
+        value: number | MaintenanceRecord;
       } | null)
     | ({
         relationTo: 'users';
@@ -721,6 +795,37 @@ export interface InvoicesSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "maintenance-records_select".
+ */
+export interface MaintenanceRecordsSelect<T extends boolean = true> {
+  vehicle?: T;
+  type?: T;
+  date?: T;
+  mileage?: T;
+  items?:
+    | T
+    | {
+        name?: T;
+        brand?: T;
+        spec?: T;
+        partNumber?: T;
+        quantity?: T;
+        unitCost?: T;
+        id?: T;
+      };
+  laborCost?: T;
+  totalCost?: T;
+  receipt?: T;
+  notes?: T;
+  nextDueMileage?: T;
+  nextDueDate?: T;
+  owner?: T;
+  aiRecommendations?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

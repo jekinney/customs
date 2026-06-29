@@ -14,6 +14,7 @@ import { PartCategories } from './collections/PartCategories'
 import { Stores } from './collections/Stores'
 import { Parts } from './collections/Parts'
 import { Invoices } from './collections/Invoices'
+import { MaintenanceRecords } from './collections/MaintenanceRecords'
 import { Settings } from './globals/Settings'
 import { EstimatorConfig } from './globals/EstimatorConfig'
 
@@ -64,7 +65,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Vehicles, Media, Inquiries, PartCategories, Stores, Parts, Invoices, Users],
+  collections: [Vehicles, Media, Inquiries, PartCategories, Stores, Parts, Invoices, MaintenanceRecords, Users],
   globals: [Settings, EstimatorConfig],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
