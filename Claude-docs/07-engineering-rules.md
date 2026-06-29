@@ -54,7 +54,7 @@ Documentation is part of "done," written **alongside** the code, never deferred.
   - `invoice-ingestion.md` — upload → AI parse → review → confirm → parts created (with a diagram).
   - `add-vehicle.md`, `ownership-transfer.md`, `local-dev.md`, `deploy.md`, `running-tests.md`.
 - **ADRs** (Architecture Decision Records) in `docs/adr/` for any decision of consequence
-  (e.g. "ADR-0001: Payload + Cloud Run", "ADR-0002: GCS for media"). One short file per decision:
+  (e.g. "ADR-0001: Payload + DigitalOcean App Platform", "ADR-0002: Spaces for media"). One short file per decision:
   context → decision → consequences.
 - **Inline**: doc-comments on Payload collections/access functions and any non-obvious logic;
   typed schemas as living documentation.

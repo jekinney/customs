@@ -31,8 +31,8 @@ stack, the one open fork (data + CMS), hosting, image storage, auth, and email.
 
 Everything else above is settled. This is the decision to make.
 
-> **DECIDED (2026-06-28): Option A — Payload CMS 3 + Neon Postgres.** Option B is kept below
-> for context only.
+> **DECIDED (2026-06-28): Option A — Payload CMS 3 + Postgres** (prod = DO Managed Postgres). Option
+> B is kept below for context only.
 
 ### Option A — Payload CMS 3 + Postgres  ✅ CHOSEN
 

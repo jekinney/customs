@@ -41,11 +41,14 @@ the 3 brand PNGs into `public/brand/`; verify the Resend sending domain.
 - [x] **Legacy data exported** → `migration/` (1 project "Shop Truck" + decoded before/after JPGs;
       no custom shop doc). Reusable script at `scripts/export-legacy-firestore.mjs`.
 - [x] Docs: app `README.md`, `docs/workflows/local-dev.md`, `docs/workflows/deploy.md`, `migration/README.md`.
-- [ ] **Remaining (needs your accounts):** provision **Neon Postgres** + **GCS** bucket access +
-      **Resend**; add repo secret `GCP_SA_KEY` + Secret Manager `DATABASE_URI`/`PAYLOAD_SECRET`;
-      first real deploy to a live Cloud Run URL; create the GitHub remote and push.
+- [x] **Deploy target switched to DigitalOcean App Platform** (commit ab789c1) — `deploy.sh`/CI now
+      use `doctl`; **Resend** + **DO Spaces** later wired (Phases 4–5). *(Original Phase 0 deploy
+      scripts targeted Cloud Run; superseded — see [02-target-architecture.md](02-target-architecture.md).)*
+- [ ] **Remaining (needs your accounts):** create the GitHub remote + push; `doctl auth`; first real
+      deploy to App Platform (provisions DO Managed Postgres); set app secrets + repo secrets
+      `DIGITALOCEAN_ACCESS_TOKEN`/`DO_APP_ID`.
 - **Done when:** ✅ hello-world + admin **QA-able at `localhost:3000` in Docker**, ✅ sample test
-  green, ✅ CI + export + git in place; ⏳ live Cloud Run URL (pending cloud provisioning).
+  green, ✅ CI + export + git in place; ⏳ live App Platform URL (pending provisioning — Phase 7).
 
 ## Phase 1 — Foundation & design system  (1–2 days) — 🟢 mostly done (2026-06-28)
 
@@ -129,7 +132,7 @@ the 3 brand PNGs into `public/brand/`; verify the Resend sending domain.
 ## Phase 7 — Launch  (½–1 day)
 
 - [ ] Final content review; publish builds.
-- [ ] Point `120customs.com` DNS at Vercel; verify SSL.
+- [ ] Map `120customs.com` to the DigitalOcean App Platform app; verify SSL.
 - [ ] Submit sitemap to Google Search Console; set up Google Business Profile.
 - [ ] Keep the old site reachable until the new one is verified, then cut over.
 - **Done when:** 120customs.com serves the new site and Google can crawl it.

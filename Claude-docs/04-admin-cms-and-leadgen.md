@@ -82,5 +82,5 @@ This is why we're on Next.js. Build it in from the start:
 
 Add **Google Analytics** (or privacy-friendly self-hosted Plausible) to see which builds get
 traffic and where inquiries come from. Plus **Google Search Console** to monitor indexing +
-queries. (Not Vercel Analytics — we're on Cloud Run, see
+queries. (We're on DigitalOcean App Platform, not Vercel — see
 [07-engineering-rules.md](07-engineering-rules.md) Rule 3.)
