@@ -34,6 +34,11 @@ export const Vehicles: CollectionConfig = {
   },
   fields: [
     {
+      name: 'budgetPanel',
+      type: 'ui',
+      admin: { components: { Field: '@/components/admin/VehicleBudget#default' } },
+    },
+    {
       type: 'row',
       fields: [
         { name: 'title', type: 'text', required: true, admin: { width: '60%' } },
