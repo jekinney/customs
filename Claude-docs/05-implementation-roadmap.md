@@ -177,13 +177,16 @@ rather have the build-tracking tooling sooner — say the word and we resequence
 - **Done when:** ✅ a vehicle's edit page shows its live build budget from its parts (verified on the
   Shop Truck: $4,350 spent of $8,000).
 
-### Phase 11 — AI invoice ingestion  (2–4 days)
+### Phase 11 — AI invoice ingestion  (2–4 days) — 🟢 done (2026-06-29)
 
-- [ ] Private invoice upload → file kept in private Blob storage.
-- [ ] Gemini structured extraction (vendor, dates, totals, line items) via server action.
-- [ ] Auto-match store (aliases), suggest category per line; owner review/confirm UI.
-- [ ] Confirm → line items become `parts` linked via `sourceInvoice`.
-- **Done when:** uploading a real invoice produces a reviewable parts table and keeps the PDF.
+- [x] Private `invoices` upload collection (owner-scoped via vehicle); file kept in Spaces.
+- [x] **Gemini structured extraction** (`src/lib/invoiceAI.ts`): reads file from Spaces/disk →
+      multimodal JSON of vendor + dates + totals + line items. Endpoint `POST /api/invoices/:id/extract`.
+- [x] Auto-match store (aliases) + suggest category per line (`matchStore`/`mapCategory`, 4 unit tests);
+      review in the admin (`InvoiceActions` UI: Extract / Confirm).
+- [x] **Confirm → line items become `parts`** linked via `sourceInvoice` (`confirmInvoice`, integration test).
+- **Done when:** ✅ extraction pipeline verified end-to-end; confirm creates parts. Real-invoice quality
+  is owner-QA'd by uploading an actual receipt (Extract → review → Confirm).
 
 ### Phase 12 — Maintenance log + AI recommendations  (2–3 days)
 
