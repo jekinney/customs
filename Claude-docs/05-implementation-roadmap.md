@@ -159,12 +159,14 @@ rather have the build-tracking tooling sooner — say the word and we resequence
 - [ ] `transferLog` + an admin "transfer vehicle to user" action.
 - **Done when:** a non-owner test user cannot see another vehicle's ledger; transfer reassigns access.
 
-### Phase 9 — Categories, stores & parts  (2–3 days)
+### Phase 9 — Categories, stores & parts  (2–3 days) — 🟢 done (2026-06-28)
 
-- [ ] `partCategories` CRUD (seeded: driveline, diff, engine, body, electrical, …).
-- [ ] `stores` CRUD with `aliases` (seeded: Rock Auto, Summit, Jegs, …).
-- [ ] `parts` collection + manual add/edit UI; filter by category/store/status.
-- **Done when:** you can manually build a parts list for a vehicle.
+- [x] `part-categories` CRUD (seeded 16: driveline, diff, engine, body, electrical, …).
+- [x] `stores` CRUD with `aliases` (seeded 7: RockAuto, Summit, JEGS, …).
+- [x] `parts` collection: vehicle + category + store + qty/price (auto `lineTotal`) + status
+      (wishlist→ordered→received→installed→returned); **owner-scoped** (inherits owner from the
+      vehicle), never public. New `privateOwnerAccess` helper; 6 access tests green.
+- **Done when:** ✅ you can manually build a parts list per vehicle in `/admin` → Garage Ledger.
 
 ### Phase 10 — Running budget dashboard  (1–2 days)
 
