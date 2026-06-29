@@ -23,14 +23,25 @@ services:
     health_check:
       http_path: /
     envs:
-      # App Platform injects the managed DB connection string here.
+      # Existing DO Managed Postgres — set as a SECRET (use the PRIVATE/VPC connection
+      # string, .l.db.ondigitalocean.com, with ?sslmode=require). Add this App as a
+      # Trusted Source on the database. Format:
+      #   postgresql://doadmin:<password>@<private-host>:25060/defaultdb?sslmode=require
       - key: DATABASE_URI
         scope: RUN_TIME
-        value: ${db.DATABASE_URL}
+        type: SECRET
       # Managed PG requires TLS; tells our config to enable ssl.
       - key: DATABASE_SSL
         scope: RUN_TIME
         value: 'true'
+      # FIRST DEPLOY ONLY: set to 'true' so Payload creates the schema on an empty DB,
+      # then remove it (production must not auto-push on every deploy).
+      - key: PAYLOAD_DB_PUSH
+        scope: RUN_TIME
+        value: 'false'
+      - key: NEXT_PUBLIC_SITE_URL
+        scope: RUN_TIME
+        value: https://120customs.com
       # Set these as encrypted app-level secrets (dashboard or `doctl apps update`):
       - key: PAYLOAD_SECRET
         scope: RUN_TIME
@@ -38,6 +49,16 @@ services:
       - key: GEMINI_API_KEY
         scope: RUN_TIME
         type: SECRET
+      # Resend (contact-form email). Verify a sending domain to use website@120customs.com.
+      - key: RESEND_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: RESEND_FROM
+        scope: RUN_TIME
+        value: 120 Customs <onboarding@resend.dev>
+      - key: INQUIRY_NOTIFY_EMAIL
+        scope: RUN_TIME
+        value: jason.kinney@120customs.com
       # DigitalOcean Spaces (media storage). Non-secret values below; keys are SECRET
       # (set them in the App Platform dashboard / `doctl apps update`).
       - key: S3_ENDPOINT
@@ -56,11 +77,6 @@ services:
         scope: RUN_TIME
         type: SECRET
 
-databases:
-  - name: db
-    engine: PG
-    version: '16'
-    production: true
-    cluster_name: 120customs-db
-    size: db-s-1vcpu-1gb
-    num_nodes: 1
+# Using the existing DO Managed Postgres (set via the DATABASE_URI secret above),
+# so no spec-created `databases:` block. Add this App as a Trusted Source on that
+# database (DigitalOcean → Databases → Settings → Trusted Sources).

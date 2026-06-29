@@ -14,18 +14,30 @@ standalone) straight from the connected GitHub repo, with **DigitalOcean Managed
    ```
 2. In `.do/app.yaml`, set `services[0].github.repo` to your repo slug (e.g. `jekinney/120customs`)
    and authorize DigitalOcean's GitHub app for the repo.
-3. Create the app + managed database:
+3. Create the app:
    ```bash
    ./deploy.sh create     # doctl apps create --spec .do/app.yaml
    ```
-   Note the printed **App ID**.
-4. Set the app secrets (dashboard → app → Settings → env vars, or `doctl apps update`):
-   - `PAYLOAD_SECRET` — long random string
-   - `GEMINI_API_KEY` — for AI features
-   - `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` and the `S3_ENDPOINT` / `S3_BUCKET` values for
-     **Spaces** (media)
-   `DATABASE_URI` is injected automatically from the managed DB (`${db.DATABASE_URL}`), and
-   `DATABASE_SSL=true` is set in the spec (managed PG requires TLS).
+   Note the printed **App ID**. (The spec uses our **existing** DO Managed Postgres — it does not
+   create a new one.)
+4. **Database — existing DO Managed Postgres** (`ny-120-customs`, region NYC):
+   - On the database: **Settings → Trusted Sources → add this App** so it can connect privately.
+   - Set the `DATABASE_URI` app secret to the **PRIVATE/VPC** connection string (the
+     `…l.db.ondigitalocean.com` host), e.g.
+     `postgresql://doadmin:<password>@<private-host>:25060/defaultdb?sslmode=require`.
+     The private host is only reachable from inside DO (which is what the App uses).
+   - `DATABASE_SSL=true` is already in the spec.
+5. Set the other app secrets (dashboard → app → Settings, or `doctl apps update`):
+   - `PAYLOAD_SECRET` — long random string (≥32 chars)
+   - `GEMINI_API_KEY` — AI features
+   - `RESEND_API_KEY` — contact-form email
+   - `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` — Spaces (the non-secret `S3_*` values are in the spec)
+6. **First deploy — create the schema:** production does not auto-push. For the very first deploy
+   against the empty DB, set **`PAYLOAD_DB_PUSH=true`** in the app env, deploy, let it boot (Payload
+   creates all tables), then **set it back to `false`** and redeploy. *(Long-term: replace this with
+   committed `payload migrate` migrations.)*
+   After the first boot, visit `/admin` to create your owner user; re-seed content as needed
+   (`scripts/seed-*` can be run with `DATABASE_URI` pointed at the DB from a machine with access).
 
 ## How deploys happen (test-gated)
 

@@ -68,6 +68,9 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
+    // In dev, Payload auto-pushes the schema. Production never pushes — EXCEPT a
+    // one-time first deploy against an empty managed DB, enabled via PAYLOAD_DB_PUSH=true.
+    ...(process.env.PAYLOAD_DB_PUSH ? { push: process.env.PAYLOAD_DB_PUSH === 'true' } : {}),
     pool: {
       connectionString: process.env.DATABASE_URI || '',
       // DigitalOcean Managed Postgres requires TLS (set DATABASE_SSL=true in prod).
