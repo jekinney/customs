@@ -73,6 +73,7 @@ export interface Config {
     'part-categories': PartCategory;
     stores: Store;
     parts: Part;
+    invoices: Invoice;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -87,6 +88,7 @@ export interface Config {
     'part-categories': PartCategoriesSelect<false> | PartCategoriesSelect<true>;
     stores: StoresSelect<false> | StoresSelect<true>;
     parts: PartsSelect<false> | PartsSelect<true>;
+    invoices: InvoicesSelect<false> | InvoicesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -377,11 +379,78 @@ export interface Part {
   purchaseDate?: string | null;
   notes?: string | null;
   /**
+   * Set when created from an uploaded invoice.
+   */
+  sourceInvoice?: (number | null) | Invoice;
+  /**
    * Inherited from the vehicle. Only admins can change it.
    */
   owner?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "invoices".
+ */
+export interface Invoice {
+  id: number;
+  vehicle: number | Vehicle;
+  /**
+   * AI-detected; confirm/adjust.
+   */
+  store?: (number | null) | Store;
+  invoiceNumber?: string | null;
+  invoiceDate?: string | null;
+  subtotal?: number | null;
+  tax?: number | null;
+  shipping?: number | null;
+  total?: number | null;
+  /**
+   * Review/edit, then Confirm to create parts.
+   */
+  lineItems?:
+    | {
+        description: string;
+        partNumber?: string | null;
+        quantity?: number | null;
+        unitPrice?: number | null;
+        lineTotal?: number | null;
+        /**
+         * AI-suggested; confirm/adjust.
+         */
+        category?: (number | null) | PartCategory;
+        id?: string | null;
+      }[]
+    | null;
+  reviewStatus?: ('pending-review' | 'confirmed') | null;
+  /**
+   * Inherited from the vehicle.
+   */
+  owner?: (number | null) | User;
+  /**
+   * Raw AI output (debug).
+   */
+  aiRaw?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -430,6 +499,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'parts';
         value: number | Part;
+      } | null)
+    | ({
+        relationTo: 'invoices';
+        value: number | Invoice;
       } | null)
     | ({
         relationTo: 'users';
@@ -605,9 +678,49 @@ export interface PartsSelect<T extends boolean = true> {
   status?: T;
   purchaseDate?: T;
   notes?: T;
+  sourceInvoice?: T;
   owner?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "invoices_select".
+ */
+export interface InvoicesSelect<T extends boolean = true> {
+  vehicle?: T;
+  store?: T;
+  invoiceNumber?: T;
+  invoiceDate?: T;
+  subtotal?: T;
+  tax?: T;
+  shipping?: T;
+  total?: T;
+  lineItems?:
+    | T
+    | {
+        description?: T;
+        partNumber?: T;
+        quantity?: T;
+        unitPrice?: T;
+        lineTotal?: T;
+        category?: T;
+        id?: T;
+      };
+  reviewStatus?: T;
+  owner?: T;
+  aiRaw?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

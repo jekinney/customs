@@ -87,6 +87,12 @@ export const Parts: CollectionConfig = {
     },
     { name: 'notes', type: 'textarea' },
     {
+      name: 'sourceInvoice',
+      type: 'relationship',
+      relationTo: 'invoices',
+      admin: { position: 'sidebar', readOnly: true, description: 'Set when created from an uploaded invoice.' },
+    },
+    {
       name: 'owner',
       type: 'relationship',
       relationTo: 'users',

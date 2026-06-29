@@ -13,6 +13,7 @@ import { Inquiries } from './collections/Inquiries'
 import { PartCategories } from './collections/PartCategories'
 import { Stores } from './collections/Stores'
 import { Parts } from './collections/Parts'
+import { Invoices } from './collections/Invoices'
 import { Settings } from './globals/Settings'
 import { EstimatorConfig } from './globals/EstimatorConfig'
 
@@ -24,7 +25,7 @@ const dirname = path.dirname(filename)
 const storagePlugins = process.env.S3_BUCKET
   ? [
       s3Storage({
-        collections: { media: true },
+        collections: { media: true, invoices: true },
         bucket: process.env.S3_BUCKET,
         config: {
           endpoint: process.env.S3_ENDPOINT,
@@ -63,7 +64,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Vehicles, Media, Inquiries, PartCategories, Stores, Parts, Users],
+  collections: [Vehicles, Media, Inquiries, PartCategories, Stores, Parts, Invoices, Users],
   globals: [Settings, EstimatorConfig],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
