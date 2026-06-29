@@ -70,6 +70,9 @@ export interface Config {
     vehicles: Vehicle;
     media: Media;
     inquiries: Inquiry;
+    'part-categories': PartCategory;
+    stores: Store;
+    parts: Part;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -81,6 +84,9 @@ export interface Config {
     vehicles: VehiclesSelect<false> | VehiclesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     inquiries: InquiriesSelect<false> | InquiriesSelect<true>;
+    'part-categories': PartCategoriesSelect<false> | PartCategoriesSelect<true>;
+    stores: StoresSelect<false> | StoresSelect<true>;
+    parts: PartsSelect<false> | PartsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -310,6 +316,75 @@ export interface Inquiry {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "part-categories".
+ */
+export interface PartCategory {
+  id: number;
+  name: string;
+  slug?: string | null;
+  description?: string | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stores".
+ */
+export interface Store {
+  id: number;
+  name: string;
+  website?: string | null;
+  phone?: string | null;
+  /**
+   * Your account # (private).
+   */
+  accountNumber?: string | null;
+  /**
+   * Alternate names this vendor appears as on invoices (helps AI matching).
+   */
+  aliases?:
+    | {
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "parts".
+ */
+export interface Part {
+  id: number;
+  name: string;
+  vehicle: number | Vehicle;
+  category?: (number | null) | PartCategory;
+  store?: (number | null) | Store;
+  partNumber?: string | null;
+  quantity?: number | null;
+  /**
+   * Price each ($).
+   */
+  unitPrice?: number | null;
+  /**
+   * qty × unit (auto).
+   */
+  lineTotal?: number | null;
+  status?: ('wishlist' | 'ordered' | 'received' | 'installed' | 'returned') | null;
+  purchaseDate?: string | null;
+  notes?: string | null;
+  /**
+   * Inherited from the vehicle. Only admins can change it.
+   */
+  owner?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -343,6 +418,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'inquiries';
         value: number | Inquiry;
+      } | null)
+    | ({
+        relationTo: 'part-categories';
+        value: number | PartCategory;
+      } | null)
+    | ({
+        relationTo: 'stores';
+        value: number | Store;
+      } | null)
+    | ({
+        relationTo: 'parts';
+        value: number | Part;
       } | null)
     | ({
         relationTo: 'users';
@@ -468,6 +555,57 @@ export interface InquiriesSelect<T extends boolean = true> {
   vehicle?: T;
   message?: T;
   source?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "part-categories_select".
+ */
+export interface PartCategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stores_select".
+ */
+export interface StoresSelect<T extends boolean = true> {
+  name?: T;
+  website?: T;
+  phone?: T;
+  accountNumber?: T;
+  aliases?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "parts_select".
+ */
+export interface PartsSelect<T extends boolean = true> {
+  name?: T;
+  vehicle?: T;
+  category?: T;
+  store?: T;
+  partNumber?: T;
+  quantity?: T;
+  unitPrice?: T;
+  lineTotal?: T;
+  status?: T;
+  purchaseDate?: T;
+  notes?: T;
+  owner?: T;
   updatedAt?: T;
   createdAt?: T;
 }

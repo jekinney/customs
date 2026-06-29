@@ -40,3 +40,14 @@ export const adminOrOwnerWrite: Access = ({ req: { user } }) => {
   if (isAdmin(user)) return true
   return { owner: { equals: user.id } }
 }
+
+/**
+ * Private owner-scoped access for the Garage Ledger (parts/invoices/maintenance):
+ * NEVER public. Admin sees/does everything; an owner is scoped to records they own
+ * (records carry an `owner` set from their vehicle). Anonymous: denied.
+ */
+export const privateOwnerAccess: Access = ({ req: { user } }) => {
+  if (!user) return false
+  if (isAdmin(user)) return true
+  return { owner: { equals: user.id } }
+}

@@ -10,6 +10,9 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Vehicles } from './collections/Vehicles'
 import { Inquiries } from './collections/Inquiries'
+import { PartCategories } from './collections/PartCategories'
+import { Stores } from './collections/Stores'
+import { Parts } from './collections/Parts'
 import { Settings } from './globals/Settings'
 import { EstimatorConfig } from './globals/EstimatorConfig'
 
@@ -60,7 +63,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Vehicles, Media, Inquiries, Users],
+  collections: [Vehicles, Media, Inquiries, PartCategories, Stores, Parts, Users],
   globals: [Settings, EstimatorConfig],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
