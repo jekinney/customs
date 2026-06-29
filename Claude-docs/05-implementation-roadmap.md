@@ -5,16 +5,16 @@ has a clear "definition of done." Phases are sequential; within a phase, items c
 
 ## Current status (2026-06-28)
 
-**Phases 0–6 are complete** — the site is feature-complete for a public launch. Built & verified:
+**All build phases are complete (0–6 public site + 8–12 private Garage Ledger).** Built & verified:
 Next.js 16 + Payload 3 + Postgres on Docker; showroom + vehicle spec-sheet (gallery/lightbox) +
-contact/inquiries + build estimator (Gemini); CMS with roles/ownership, Settings, Inquiries,
-Estimator config; SEO (metadata/sitemap/robots/JSON-LD) + next/image + ISR; branded admin.
-**Infra wired:** **Resend** (email), **DigitalOcean Spaces** (media), **Gemini** (AI). Production
-build passes clean (`next build`, 0 TS errors). Test suite 16/16 green.
+contact/inquiries + build estimator (Gemini); CMS with roles/ownership; SEO + next/image + ISR;
+**Garage Ledger** — parts/categories/stores, per-vehicle budget dashboard, **AI invoice ingestion**,
+maintenance log + **AI next-service recs**. **Infra wired:** Resend (email), DigitalOcean Spaces
+(media), Gemini (AI), DO Managed Postgres. Production build passes; test suite **35/35** green.
 
-**Not yet done:** Phase 7 — **launch/deploy to DigitalOcean App Platform** (deferred; needs the DO
-token + GitHub remote) + analytics. Optional **Phases 8–12 — private Garage Ledger**. Minor: drop
-the 3 brand PNGs into `public/brand/`; verify the Resend sending domain.
+**Only remaining:** Phase 7 — **launch/deploy to DigitalOcean App Platform** (needs the DO token +
+GitHub remote; `.do/app.yaml` + `deploy.sh` + managed DB all wired) + analytics. Minor: drop the 3
+brand PNGs into `public/brand/`; verify the Resend sending domain.
 
 > **Working rules apply to every phase** — see [07-engineering-rules.md](07-engineering-rules.md):
 > TDD red→green (1), documented as we go (2), Docker-local + **DigitalOcean** deploy (3), and **you QA
@@ -188,11 +188,15 @@ rather have the build-tracking tooling sooner — say the word and we resequence
 - **Done when:** ✅ extraction pipeline verified end-to-end; confirm creates parts. Real-invoice quality
   is owner-QA'd by uploading an actual receipt (Extract → review → Confirm).
 
-### Phase 12 — Maintenance log + AI recommendations  (2–3 days)
+### Phase 12 — Maintenance log + AI recommendations  (2–3 days) — 🟢 done (2026-06-29)
 
-- [ ] `maintenanceRecords` (type, mileage, items, costs, optional receipt file).
-- [ ] Gemini next-service recommendations from history + mileage; upcoming-maintenance reminders.
-- **Done when:** logging an oil change records the parts/consumables and surfaces next-due advice.
+- [x] `maintenance-records` (type, mileage, items/consumables, labor, auto `totalCost`, receipt,
+      next-due fields) — private, owner-scoped via vehicle. `computeMaintenanceTotal` unit-tested;
+      owner-scoping integration tests.
+- [x] **Gemini next-service recommendations** (`src/lib/maintenanceAI.ts`) from history + mileage;
+      endpoint `POST /api/maintenance-records/:id/recommend`; `MaintenanceActions` admin UI (button + list).
+- **Done when:** ✅ logging a service records the consumables + total and surfaces AI next-due advice
+  (verified end-to-end on a 1990 C1500).
 
 ---
 
