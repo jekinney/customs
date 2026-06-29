@@ -168,11 +168,14 @@ rather have the build-tracking tooling sooner — say the word and we resequence
       vehicle), never public. New `privateOwnerAccess` helper; 6 access tests green.
 - **Done when:** ✅ you can manually build a parts list per vehicle in `/admin` → Garage Ledger.
 
-### Phase 10 — Running budget dashboard  (1–2 days)
+### Phase 10 — Running budget dashboard  (1–2 days) — 🟢 done (2026-06-28)
 
-- [ ] Per-vehicle rollup: spent-to-date, by category, by store, vs `budgetTarget`.
-- [ ] Planned vs actual; charts; vehicle Ledger landing view.
-- **Done when:** adding/removing parts updates the budget live.
+- [x] Pure `computeBudget(parts, target)` rollup: spent (actual) vs planned, projected total,
+      remaining/over vs `budgetTarget`, by-category + by-store (excludes returned). 4 unit tests.
+- [x] **`VehicleBudget`** admin panel (UI field at the top of the vehicle edit view) — fetches the
+      vehicle's parts, shows spend-vs-target progress bar + breakdowns. Private (admin only), theme-aware.
+- **Done when:** ✅ a vehicle's edit page shows its live build budget from its parts (verified on the
+  Shop Truck: $4,350 spent of $8,000).
 
 ### Phase 11 — AI invoice ingestion  (2–4 days)
 
