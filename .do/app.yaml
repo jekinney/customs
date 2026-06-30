@@ -14,7 +14,7 @@ services:
     dockerfile_path: Dockerfile
     source_dir: /
     github:
-      repo: jekinney/120customs # TODO: set to the actual GitHub repo slug once created
+      repo: jekinney/customs
       branch: main
       deploy_on_push: false # CI triggers deploys after tests pass
     http_port: 8080
