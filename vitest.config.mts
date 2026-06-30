@@ -1,9 +1,13 @@
 import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import react from '@vitejs/plugin-react-swc'
 
 export default defineConfig({
-  plugins: [tsconfigPaths(), react()],
+  plugins: [react()],
+  resolve: {
+    // Vite 6 native tsconfig paths resolution
+    // @ts-ignore
+    tsconfigPaths: true,
+  },
   test: {
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
