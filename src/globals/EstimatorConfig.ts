@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { adminOnly } from '@/access/roles'
+import { revalidatePath } from 'next/cache'
 
 // CMS-editable inputs that drive the build cost estimator. Public read; admin write.
 export const EstimatorConfig: GlobalConfig = {
@@ -10,8 +11,26 @@ export const EstimatorConfig: GlobalConfig = {
     read: () => true,
     update: adminOnly,
   },
+  hooks: {
+    afterChange: [
+      ({ doc }) => {
+        try {
+          revalidatePath('/')
+          revalidatePath('/(frontend)', 'layout')
+          revalidatePath('/admin/globals/estimator-config')
+        } catch (e) {
+          console.warn('revalidatePath skipped (not running in Next.js context)')
+        }
+        return doc
+      },
+    ],
+  },
   fields: [
-    { name: 'intro', type: 'textarea', admin: { description: 'Short blurb shown above the estimator.' } },
+    {
+      name: 'intro',
+      type: 'textarea',
+      admin: { description: 'Short blurb shown above the estimator.' },
+    },
     {
       name: 'platforms',
       type: 'array',
@@ -22,7 +41,12 @@ export const EstimatorConfig: GlobalConfig = {
           type: 'row',
           fields: [
             { name: 'name', type: 'text', required: true, admin: { width: '50%' } },
-            { name: 'basePrice', type: 'number', required: true, admin: { width: '50%', description: 'Starting build cost ($).' } },
+            {
+              name: 'basePrice',
+              type: 'number',
+              required: true,
+              admin: { width: '50%', description: 'Starting build cost ($).' },
+            },
           ],
         },
         {
@@ -49,7 +73,10 @@ export const EstimatorConfig: GlobalConfig = {
       name: 'features',
       type: 'array',
       labels: { singular: 'Feature', plural: 'Features' },
-      admin: { description: 'Build options. Lift / wheels / tires are single-choice; the rest are add-ons.' },
+      admin: {
+        description:
+          'Build options. Lift / wheels / tires are single-choice; the rest are add-ons.',
+      },
       fields: [
         {
           type: 'row',

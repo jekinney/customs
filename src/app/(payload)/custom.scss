@@ -1,14 +1,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
 
 // ============================================================================
-// 120 Customs admin polish — THEME-SAFE, NO color overrides.
-// Keeps Payload's native light/dark palette; only adds Roboto, rounded corners,
-// soft shadows, card hover, and crisp monochrome (Lucide-style) nav icons that
-// inherit the menu text colour via CSS mask + currentColor.
+// Phase 1: Modern Theme Variables (Datta Able Inspired)
+// Overriding Payload's default palette with Datta Able and 120 Customs styling.
 // ============================================================================
 
+:root,
+[data-theme='light'] {
+  // Datta Able Light Backgrounds
+  --theme-bg: #f4f7fa; // Soft gray background
+  --theme-elevation-100: #ffffff; // Cards/panels are pure white
+  --theme-elevation-150: #f8f9fa;
+  --theme-elevation-200: #f3f5f7;
+  --theme-elevation-300: #dbe0e5;
+
+  // Modern Indigo/Purple as Primary Accent (Datta Able $brand-color2 / $blue)
+  --theme-success-500: #a389d4;
+  --theme-success-400: #899ed4;
+
+  // Standard Text
+  --theme-text: #3e4853;
+  --theme-error-500: #ea4d4d;
+}
+
+[data-theme='dark'] {
+  // Dark Mode Overrides (Mixing 120 Customs Gold with Datta Able Dark)
+  --theme-bg: #1d2630; // Deep gray-blue background
+  --theme-elevation-100: #232d37; // Card background
+  --theme-elevation-150: #2e3a46;
+  --theme-elevation-200: #3e4853;
+  --theme-elevation-300: #5b6b79;
+
+  // 120 Customs Gold / Accent
+  --theme-success-500: #e7c264;
+  --theme-success-400: #d0aa53;
+
+  --theme-text: #dbe0e5;
+  --theme-error-500: #ea4d4d;
+}
+
+// Global overrides for modern styling
 body {
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family:
+    'Roboto',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  background-color: var(--theme-bg);
 }
 
 // ---- Rounded corners + soft shadows (no colour change) ----
@@ -67,51 +106,75 @@ $icon-post: '%3C/svg%3E';
 
 // Dashboard (grid)
 .nav a[href='/admin']::before {
-  @include nav-icon("%3Crect width='7' height='7' x='3' y='3' rx='1'/%3E%3Crect width='7' height='7' x='14' y='3' rx='1'/%3E%3Crect width='7' height='7' x='14' y='14' rx='1'/%3E%3Crect width='7' height='7' x='3' y='14' rx='1'/%3E");
+  @include nav-icon(
+    "%3Crect width='7' height='7' x='3' y='3' rx='1'/%3E%3Crect width='7' height='7' x='14' y='3' rx='1'/%3E%3Crect width='7' height='7' x='14' y='14' rx='1'/%3E%3Crect width='7' height='7' x='3' y='14' rx='1'/%3E"
+  );
 }
 // Media (image)
 .nav a[href$='/collections/media']::before {
-  @include nav-icon("%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Cpath d='m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21'/%3E");
+  @include nav-icon(
+    "%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Cpath d='m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21'/%3E"
+  );
 }
 // Users
 .nav a[href$='/collections/users']::before {
-  @include nav-icon("%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E");
+  @include nav-icon(
+    "%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E"
+  );
 }
 // Vehicles (truck)
 .nav a[href$='/collections/vehicles']::before {
-  @include nav-icon("%3Cpath d='M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2'/%3E%3Cpath d='M15 18H9'/%3E%3Cpath d='M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14'/%3E%3Ccircle cx='17' cy='18' r='2'/%3E%3Ccircle cx='7' cy='18' r='2'/%3E");
+  @include nav-icon(
+    "%3Cpath d='M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2'/%3E%3Cpath d='M15 18H9'/%3E%3Cpath d='M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14'/%3E%3Ccircle cx='17' cy='18' r='2'/%3E%3Ccircle cx='7' cy='18' r='2'/%3E"
+  );
 }
 // Inquiries (mail)
 .nav a[href$='/collections/inquiries']::before {
-  @include nav-icon("%3Crect width='20' height='16' x='2' y='4' rx='2'/%3E%3Cpath d='m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7'/%3E");
+  @include nav-icon(
+    "%3Crect width='20' height='16' x='2' y='4' rx='2'/%3E%3Cpath d='m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7'/%3E"
+  );
 }
 // Part Categories (tag)
 .nav a[href$='/collections/part-categories']::before {
-  @include nav-icon("%3Cpath d='M12.59 2.59A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.41l8.7 8.7a2.43 2.43 0 0 0 3.42 0l6.58-6.58a2.43 2.43 0 0 0 0-3.42z'/%3E%3Cpath d='M7.5 7.5h.01'/%3E");
+  @include nav-icon(
+    "%3Cpath d='M12.59 2.59A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.41l8.7 8.7a2.43 2.43 0 0 0 3.42 0l6.58-6.58a2.43 2.43 0 0 0 0-3.42z'/%3E%3Cpath d='M7.5 7.5h.01'/%3E"
+  );
 }
 // Stores (shopping bag)
 .nav a[href$='/collections/stores']::before {
-  @include nav-icon("%3Cpath d='M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z'/%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M16 10a4 4 0 0 1-8 0'/%3E");
+  @include nav-icon(
+    "%3Cpath d='M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z'/%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M16 10a4 4 0 0 1-8 0'/%3E"
+  );
 }
 // Parts (wrench)
 .nav a[href$='/collections/parts']::before {
-  @include nav-icon("%3Cpath d='M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z'/%3E");
+  @include nav-icon(
+    "%3Cpath d='M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z'/%3E"
+  );
 }
 // Invoices (file-text)
 .nav a[href$='/collections/invoices']::before {
-  @include nav-icon("%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v5h5'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3Cpath d='M10 9H8'/%3E");
+  @include nav-icon(
+    "%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v5h5'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3Cpath d='M10 9H8'/%3E"
+  );
 }
 // Maintenance (hammer)
 .nav a[href$='/collections/maintenance-records']::before {
-  @include nav-icon("%3Cpath d='m15 12-8.5 8.5a2.12 2.12 0 1 1-3-3L12 9'/%3E%3Cpath d='M17.64 15 22 10.64'/%3E%3Cpath d='m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91'/%3E");
+  @include nav-icon(
+    "%3Cpath d='m15 12-8.5 8.5a2.12 2.12 0 1 1-3-3L12 9'/%3E%3Cpath d='M17.64 15 22 10.64'/%3E%3Cpath d='m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91'/%3E"
+  );
 }
 // Settings (sliders)
 .nav a[href$='/globals/settings']::before {
-  @include nav-icon("%3Cline x1='21' x2='14' y1='4' y2='4'/%3E%3Cline x1='10' x2='3' y1='4' y2='4'/%3E%3Cline x1='21' x2='12' y1='12' y2='12'/%3E%3Cline x1='8' x2='3' y1='12' y2='12'/%3E%3Cline x1='21' x2='16' y1='20' y2='20'/%3E%3Cline x1='12' x2='3' y1='20' y2='20'/%3E%3Cline x1='14' x2='14' y1='2' y2='6'/%3E%3Cline x1='8' x2='8' y1='10' y2='14'/%3E%3Cline x1='16' x2='16' y1='18' y2='22'/%3E");
+  @include nav-icon(
+    "%3Cline x1='21' x2='14' y1='4' y2='4'/%3E%3Cline x1='10' x2='3' y1='4' y2='4'/%3E%3Cline x1='21' x2='12' y1='12' y2='12'/%3E%3Cline x1='8' x2='3' y1='12' y2='12'/%3E%3Cline x1='21' x2='16' y1='20' y2='20'/%3E%3Cline x1='12' x2='3' y1='20' y2='20'/%3E%3Cline x1='14' x2='14' y1='2' y2='6'/%3E%3Cline x1='8' x2='8' y1='10' y2='14'/%3E%3Cline x1='16' x2='16' y1='18' y2='22'/%3E"
+  );
 }
 // Estimator (calculator)
 .nav a[href$='/globals/estimator-config']::before {
-  @include nav-icon("%3Crect width='16' height='20' x='4' y='2' rx='2'/%3E%3Cline x1='8' x2='16' y1='6' y2='6'/%3E%3Cline x1='16' x2='16' y1='14' y2='18'/%3E%3Cpath d='M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h.01M12 18h.01'/%3E");
+  @include nav-icon(
+    "%3Crect width='16' height='20' x='4' y='2' rx='2'/%3E%3Cline x1='8' x2='16' y1='6' y2='6'/%3E%3Cline x1='16' x2='16' y1='14' y2='18'/%3E%3Cpath d='M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h.01M12 18h.01'/%3E"
+  );
 }
 // Active item is a div without href — reserve the icon space so the label aligns.
 .nav .nav__link:not([href])::before {

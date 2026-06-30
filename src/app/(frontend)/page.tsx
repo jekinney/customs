@@ -6,6 +6,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { ShowroomGrid } from '@/components/site/ShowroomGrid'
+import { MediaImage } from '@/components/site/MediaImage'
 import { ContactForm } from '@/components/site/ContactForm'
 import { SITE_URL } from '@/lib/site'
 
@@ -26,9 +27,12 @@ export default async function HomePage() {
   const tagline = settings.tagline || '★ Precision Resto-Mods & Heavy-Duty Off-Road Builds'
   const heroHeadline =
     settings.heroHeadline || 'Trucks Built\n<span class="accent">For The Show</span>'
+  const heroText =
+    settings.heroText ||
+    'A personal collection of elite suspension drops, custom resto-mods and frame-off builds — crafted for regional car shows, the drive, and the love of classic oil-and-steel culture.'
   const storyTitle = settings.storyTitle || 'The Shop'
 
-  const mappedVehicles = vehicles.map(v => ({
+  const mappedVehicles = vehicles.map((v) => ({
     id: v.id,
     slug: v.slug as string,
     title: v.title,
@@ -36,7 +40,10 @@ export default async function HomePage() {
     year: v.year,
     status: v.status,
     summary: v.summary,
-    coverUrl: v.coverImage && typeof v.coverImage === 'object' && v.coverImage.url ? v.coverImage.url : null
+    coverUrl:
+      v.coverImage && typeof v.coverImage === 'object' && v.coverImage.url
+        ? v.coverImage.url
+        : null,
   }))
 
   // Local SEO: a LocalBusiness so 120 Customs can surface in local/map results.
@@ -55,17 +62,16 @@ export default async function HomePage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero */}
       <section className="hero">
         <div className="container">
           <span className="badge">{tagline}</span>
           <h2 dangerouslySetInnerHTML={{ __html: heroHeadline }} />
-          <p>
-            A personal collection of elite suspension drops, custom resto-mods and frame-off builds
-            — crafted for regional car shows, the drive, and the love of classic oil-and-steel
-            culture.
-          </p>
+          <p>{heroText}</p>
           <Link href="/#showroom" className="btn btn--gold">
             Examine The Showroom
           </Link>
@@ -73,7 +79,11 @@ export default async function HomePage() {
             {settings.heroImage &&
             typeof settings.heroImage === 'object' &&
             settings.heroImage.url ? (
-              <img src={settings.heroImage.url} alt={settings.heroImage.alt || 'Hero truck'} />
+              <MediaImage
+                src={settings.heroImage.url}
+                alt={settings.heroImage.alt || 'Hero truck'}
+                priority
+              />
             ) : (
               <ShopTruck />
             )}
@@ -103,7 +113,7 @@ export default async function HomePage() {
               {settings.storyImage &&
               typeof settings.storyImage === 'object' &&
               settings.storyImage.url ? (
-                <img
+                <MediaImage
                   src={settings.storyImage.url}
                   alt={settings.storyImage.alt || 'The shop'}
                   style={{ borderRadius: '0.75rem' }}
@@ -162,7 +172,9 @@ export default async function HomePage() {
           </div>
           {(settings.contactEmail || settings.phone || settings.location) && (
             <div style={{ marginTop: '1.5rem', color: 'var(--muted)', fontSize: '0.85rem' }}>
-              {[settings.contactEmail, settings.phone, settings.location].filter(Boolean).join('  ·  ')}
+              {[settings.contactEmail, settings.phone, settings.location]
+                .filter(Boolean)
+                .join('  ·  ')}
             </div>
           )}
         </div>

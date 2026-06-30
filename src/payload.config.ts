@@ -58,6 +58,11 @@ export default buildConfig({
       logout: {
         Button: '@/components/admin/Logout#default',
       },
+      views: {
+        dashboard: {
+          Component: '@/components/admin/ModernDashboard#default',
+        },
+      },
       beforeNavLinks: ['@/components/admin/DashboardLink#default'],
       afterNavLinks: [
         '@/components/admin/ViewSiteLink#default',
@@ -65,7 +70,17 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Vehicles, Media, Inquiries, PartCategories, Stores, Parts, Invoices, MaintenanceRecords, Users],
+  collections: [
+    Vehicles,
+    Media,
+    Inquiries,
+    PartCategories,
+    Stores,
+    Parts,
+    Invoices,
+    MaintenanceRecords,
+    Users,
+  ],
   globals: [Settings, EstimatorConfig],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

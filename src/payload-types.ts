@@ -899,6 +899,7 @@ export interface Setting {
   id: number;
   tagline?: string | null;
   heroHeadline?: string | null;
+  heroText?: string | null;
   heroImage?: (number | null) | Media;
   storyTitle?: string | null;
   storyContent?: {
@@ -986,6 +987,7 @@ export interface EstimatorConfig {
 export interface SettingsSelect<T extends boolean = true> {
   tagline?: T;
   heroHeadline?: T;
+  heroText?: T;
   heroImage?: T;
   storyTitle?: T;
   storyContent?: T;
